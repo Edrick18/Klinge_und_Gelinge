@@ -20,29 +20,35 @@ class NetzwerkClient:
         self.empfangs_warteschlange = queue.Queue()
 
     def verbinden(self) -> bool:
+        print(f"Verbinde mit {config.SERVER_HOST}:{config.SERVER_PORT}")
         try:
-            print(f"Verbinde mit {config.SERVER_HOST}:{config.SERVER_PORT}")
-            try:
-                self.socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-                self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
-            except Exception:
-                self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.socket.connect((config.SERVER_HOST, config.SERVER_PORT))
-            nachricht = Protokoll.nachricht_erstellen(VERBINDUNG_HERSTELLEN, {})
-            Protokoll.senden(self.socket, nachricht)
-            antwort = Protokoll.empfangen(self.socket)
-            if antwort and antwort.get(SCHLUESSEL_TYP) == VERBINDUNG_BESTAETIGT:
-                self.verbunden = True
-                self._empfangs_thread = threading.Thread(target=self.empfangs_loop, daemon=True)
-                self._empfangs_thread.start()
-                return True
-            else:
-                self.socket.close()
-                return False
+            adressen = socket.getaddrinfo(
+                config.SERVER_HOST, config.SERVER_PORT,
+                socket.AF_UNSPEC, socket.SOCK_STREAM
+            )
         except Exception:
-            if self.socket:
-                self.socket.close()
             return False
+
+        for familie, typ, proto, _, sockaddr in adressen:
+            try:
+                self.socket = socket.socket(familie, typ, proto)
+                self.socket.connect(sockaddr)
+                nachricht = Protokoll.nachricht_erstellen(VERBINDUNG_HERSTELLEN, {})
+                Protokoll.senden(self.socket, nachricht)
+                antwort = Protokoll.empfangen(self.socket)
+                if antwort and antwort.get(SCHLUESSEL_TYP) == VERBINDUNG_BESTAETIGT:
+                    self.verbunden = True
+                    self._empfangs_thread = threading.Thread(target=self.empfangs_loop, daemon=True)
+                    self._empfangs_thread.start()
+                    return True
+                self.socket.close()
+                self.socket = None
+            except Exception:
+                if self.socket:
+                    self.socket.close()
+                    self.socket = None
+
+        return False
 
     def empfangs_loop(self):
         while self.verbunden:

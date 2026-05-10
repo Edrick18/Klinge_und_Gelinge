@@ -21,6 +21,12 @@ config.py.bak
 .idea/
 .claude/
 
+# OpenCode / KI-Assistent Dateien
+Skills/
+FORTSCHRITT.md
+anforderungen.txt
+klassen-definitionen.md
+
 # Tests
 .pytest_cache/
 tests/__pycache__/

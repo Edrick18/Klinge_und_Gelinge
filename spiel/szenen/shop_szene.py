@@ -62,14 +62,8 @@ class ShopSzene(BasisSzene):
         self.kaufen_button_rect = None
         self.arena_shop_buttons = []
 
+        self._laden_angefordert = False
         self._layout_berechnen()
-        self.netzwerk_client.nachricht_senden(SHOP_LADEN, {})
-        import threading
-        def send_arena_laden():
-            import time
-            time.sleep(0.1)
-            self.netzwerk_client.nachricht_senden(ARENA_LADEN, {})
-        threading.Thread(target=send_arena_laden, daemon=True).start()
 
     def _layout_berechnen(self):
         b = config.AUFLOESUNG_BREITE
@@ -210,6 +204,11 @@ class ShopSzene(BasisSzene):
                 return
 
     def updaten(self, delta_zeit: float):
+        if not self._laden_angefordert:
+            self.netzwerk_client.nachricht_senden(SHOP_LADEN, {})
+            self.netzwerk_client.nachricht_senden(ARENA_LADEN, {})
+            self._laden_angefordert = True
+
         while True:
             nachricht = self.netzwerk_client.nachricht_holen()
             if not nachricht:

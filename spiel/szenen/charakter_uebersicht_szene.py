@@ -31,12 +31,10 @@ class CharakterUebersichtSzene(BasisSzene):
         self.xp_anzeige = 0.0
         self.hp_anzeige = 0.0
 
+        self._details_angefordert = False  # Erst beim ersten updaten() laden
         self._layout_berechnen()
 
-        if self.charakter_daten is None:
-            self.geladen = False
-            self.netzwerk_client.nachricht_senden(CHARAKTER_DETAILS_LADEN, {})
-        else:
+        if self.charakter_daten is not None:
             self.geladen = True
 
     def _layout_berechnen(self):
@@ -136,6 +134,11 @@ class CharakterUebersichtSzene(BasisSzene):
                                 ))
 
     def updaten(self, delta_zeit: float):
+        # Daten erst anfordern wenn Szene wirklich aktiv ist (nach Fade)
+        if not self._details_angefordert and self.charakter_daten is None:
+            self.netzwerk_client.nachricht_senden(CHARAKTER_DETAILS_LADEN, {})
+            self._details_angefordert = True
+
         # Balken-Animation: sanft zum Zielwert interpolieren
         if self.geladen and self.charakter_daten:
             char = self.charakter_daten

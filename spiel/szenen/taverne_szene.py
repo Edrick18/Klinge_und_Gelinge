@@ -27,27 +27,11 @@ class TaverneSzene(BasisSzene):
         self.geladen = False
         self.aktive_quest = None
         self.aufloesen_gesendet = False
-        self.quests_geladen = False
-        self.reise_status_geladen = False
+        self.reise_aktiv = False
+        self._erste_frames = 0   # Queue erst nach 2 Frames leeren, dann senden
+        self._lade_timer = 0.0   # Retry-Timer bei hängendem Ladebildschirm
 
         self._layout_berechnen()
-
-        self.geladen = False
-        self.start_delay = 0.0
-        self.quests_angefragt = False
-        self.reise_aktiv = False
-
-        if self.aktive_quest and self.aktive_quest.get("gestartet_am"):
-            gestartet = datetime.fromisoformat(self.aktive_quest["gestartet_am"])
-            jetzt = datetime.now()
-            verbleibend = (gestartet - jetzt).total_seconds() + self.aktive_quest["timer_sekunden"]
-
-            if verbleibend <= 0:
-                if not self.aufloesen_gesendet:
-                    self.netzwerk_client.nachricht_senden(QUEST_AUFLOESEN, {
-                        SCHLUESSEL_QUEST_ID: self.aktive_quest["id"]
-                    })
-                    self.aufloesen_gesendet = True
 
     def _layout_berechnen(self):
         b = config.AUFLOESUNG_BREITE
@@ -70,19 +54,27 @@ class TaverneSzene(BasisSzene):
         self.zurueck_button = pygame.Rect(20, h - 50, 120, 35)
 
     def updaten(self, delta_zeit: float):
-        if not self.quests_angefragt:
-            self.start_delay += delta_zeit
-            if self.start_delay >= 0.1:
+        # Erste 2 Frames: Queue von alten Nachrichten leeren, erst dann senden
+        if self._erste_frames < 2:
+            self._erste_frames += 1
+            while self.netzwerk_client.nachricht_holen():
+                pass
+            if self._erste_frames == 2:
                 self.netzwerk_client.nachricht_senden(QUESTS_LADEN, {})
                 self.netzwerk_client.nachricht_senden(REISE_STATUS_LADEN, {})
-                self.quests_angefragt = True
+            return
+
+        if not self.geladen:
+            self._lade_timer += delta_zeit
+            if self._lade_timer >= 1.5:
+                self.netzwerk_client.nachricht_senden(QUESTS_LADEN, {})
+                self.netzwerk_client.nachricht_senden(REISE_STATUS_LADEN, {})
+                self._lade_timer = 0.0
 
         while True:
             nachricht = self.netzwerk_client.nachricht_holen()
             if not nachricht:
                 break
-            print(f"Taverne empfängt: {nachricht.get('typ')}")
-
             typ = nachricht.get("typ")
             daten = nachricht.get("daten", {})
 
@@ -119,8 +111,6 @@ class TaverneSzene(BasisSzene):
 
             elif typ == QUEST_ERGEBNIS:
                 ergebnis = daten.get(SCHLUESSEL_QUEST_ERGEBNIS, {})
-                print(f"Quest Ergebnis empfangen: {ergebnis}")
-                print(f"kampf_ergebnis vorhanden: {ergebnis.get('kampf_ergebnis') is not None}")
                 kampf_ergebnis = ergebnis.get("kampf_ergebnis")
 
                 if kampf_ergebnis and ergebnis.get("erfolg"):
@@ -134,7 +124,6 @@ class TaverneSzene(BasisSzene):
                         self.szenen_manager, self.netzwerk_client,
                         kampf_ergebnis, spieler_name, gegner_name
                     ))
-                    print("KampfAnzeigeSzene wurde gesetzt!")
                     return
 
                 if ergebnis.get("erfolg") and not kampf_ergebnis:

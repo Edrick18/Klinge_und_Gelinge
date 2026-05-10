@@ -46,8 +46,8 @@ class SkillSzene(BasisSzene):
         self.status_timer = 0.0
         self.ausgewaehlter_skill = None
 
+        self._laden_angefordert = False
         self._layout_berechnen()
-        self.netzwerk_client.nachricht_senden(SKILLS_LADEN, {})
 
     def _layout_berechnen(self):
         b = config.AUFLOESUNG_BREITE
@@ -184,6 +184,10 @@ class SkillSzene(BasisSzene):
                 break
 
     def updaten(self, delta_zeit: float):
+        if not self._laden_angefordert:
+            self.netzwerk_client.nachricht_senden(SKILLS_LADEN, {})
+            self._laden_angefordert = True
+
         if self.status_nachricht:
             self.status_timer += delta_zeit
             if self.status_timer >= 3.0:

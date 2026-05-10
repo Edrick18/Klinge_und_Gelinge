@@ -48,9 +48,11 @@ class NetzwerkClient:
         while self.verbunden:
             nachricht = Protokoll.empfangen(self.socket)
             if nachricht is None:
+                print("[NetzwerkClient] Verbindung getrennt (empfangs_loop)")
                 self.verbunden = False
                 break
             self.empfangs_warteschlange.put(nachricht)
+        print(f"[NetzwerkClient] empfangs_loop beendet | verbunden={self.verbunden}")
 
     def nachricht_senden(self, typ: str, daten: dict) -> bool:
         print(f"Sende: {typ}")

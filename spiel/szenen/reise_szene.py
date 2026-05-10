@@ -34,10 +34,9 @@ class ReiseSzene(BasisSzene):
         self.gewaehlte_dauer = 4 * 3600
         self.dauer_buttons = []
 
+        self._laden_angefordert = False
         self._layout_berechnen()
         self.geladen = False
-
-        self.netzwerk_client.nachricht_senden(REISE_STATUS_LADEN, {})
 
     def _layout_berechnen(self):
         b = config.AUFLOESUNG_BREITE
@@ -166,6 +165,10 @@ class ReiseSzene(BasisSzene):
             self.zurueck()
 
     def updaten(self, delta_zeit: float):
+        if not self._laden_angefordert:
+            self.netzwerk_client.nachricht_senden(REISE_STATUS_LADEN, {})
+            self._laden_angefordert = True
+
         while True:
             nachricht = self.netzwerk_client.nachricht_holen()
             if not nachricht:

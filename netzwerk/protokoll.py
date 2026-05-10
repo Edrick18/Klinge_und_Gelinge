@@ -30,13 +30,16 @@ class Protokoll:
     @staticmethod
     def empfangen(socket) -> dict | None:
         try:
-            header = socket.recv(4)
-            if not header:
-                return None
+            header = b""
+            while len(header) < 4:
+                chunk = socket.recv(4 - len(header))
+                if not chunk:
+                    return None
+                header += chunk
             laenge = struct.unpack(">I", header)[0]
             daten = b""
             while len(daten) < laenge:
-                chunk = socket.recv(config.NETZWERK_PUFFER)
+                chunk = socket.recv(min(config.NETZWERK_PUFFER, laenge - len(daten)))
                 if not chunk:
                     return None
                 daten += chunk

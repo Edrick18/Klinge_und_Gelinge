@@ -38,13 +38,12 @@ class InventarSzene(BasisSzene):
         self.geladen = False
         self.vergleich_item = None  # Item zum Vergleich (ausgeruestetes Item im Slot)
 
+        self._laden_angefordert = False
         self._layout_berechnen()
 
         self.schrift_gross = pygame.font.Font(None, 48)
         self.schrift_klein = pygame.font.Font(None, 24)
         self.schrift_sehr_klein = pygame.font.Font(None, 18)
-
-        self.netzwerk_client.nachricht_senden(INVENTAR_LADEN, {})
 
     def _layout_berechnen(self):
         self.b = config.AUFLOESUNG_BREITE
@@ -233,6 +232,10 @@ class InventarSzene(BasisSzene):
         ))
 
     def updaten(self, delta_zeit: float):
+        if not self._laden_angefordert:
+            self.netzwerk_client.nachricht_senden(INVENTAR_LADEN, {})
+            self._laden_angefordert = True
+
         while True:
             msg = self.netzwerk_client.nachricht_holen()
             if not msg:

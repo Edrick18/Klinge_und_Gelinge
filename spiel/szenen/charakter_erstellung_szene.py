@@ -38,6 +38,7 @@ class CharakterErstellungSzene(BasisSzene):
         }
         self.status_nachricht = ""
         self.status_farbe = config.FARBE_TEXT
+        self.erstellen_gesendet = False
 
         self._layout_berechnen()
 
@@ -149,6 +150,11 @@ class CharakterErstellungSzene(BasisSzene):
     def erstellen_senden(self):
         if not self.name_eingabe or not self.gewaehlte_masterie or self.verbleibende_punkte > 0:
             return
+        if self.erstellen_gesendet:
+            return
+        self.erstellen_gesendet = True
+        self.status_nachricht = "Wird erstellt..."
+        self.status_farbe = config.FARBE_TEXT_GEDIMMT
         self.netzwerk_client.nachricht_senden(CHARAKTER_ERSTELLEN, {
             SCHLUESSEL_CHARAKTER_NAME: self.name_eingabe,
             SCHLUESSEL_MASTERIE: self.gewaehlte_masterie,
@@ -156,7 +162,6 @@ class CharakterErstellungSzene(BasisSzene):
         })
 
     def updaten(self, delta_zeit: float):
-        self._layout_berechnen()
         while True:
             nachricht = self.netzwerk_client.nachricht_holen()
             if not nachricht:
@@ -169,6 +174,7 @@ class CharakterErstellungSzene(BasisSzene):
             elif typ == CHARAKTER_ERSTELLEN_FEHLER:
                 self.status_nachricht = daten.get(SCHLUESSEL_NACHRICHT, "Fehler")
                 self.status_farbe = config.FARBE_HP
+                self.erstellen_gesendet = False  # Erneuter Versuch erlauben
 
     def zeichnen(self, flaeche: pygame.Surface):
         b = config.AUFLOESUNG_BREITE

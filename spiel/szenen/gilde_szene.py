@@ -36,8 +36,8 @@ class GildeSzene(BasisSzene):
         self.beschreibung_eingabe = ""
         self.aktives_feld = None
 
+        self._laden_angefordert = False
         self._layout_berechnen()
-        self.netzwerk_client.nachricht_senden(GILDE_LADEN, {})
 
     def _layout_berechnen(self):
         b = config.AUFLOESUNG_BREITE
@@ -220,6 +220,10 @@ class GildeSzene(BasisSzene):
             self.netzwerk_client.nachricht_senden(GILDE_AUFSTEIGEN, {})
 
     def updaten(self, delta_zeit: float):
+        if not self._laden_angefordert:
+            self.netzwerk_client.nachricht_senden(GILDE_LADEN, {})
+            self._laden_angefordert = True
+
         while True:
             nachricht = self.netzwerk_client.nachricht_holen()
             if not nachricht:

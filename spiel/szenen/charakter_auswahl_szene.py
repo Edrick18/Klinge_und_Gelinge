@@ -38,9 +38,9 @@ class CharakterAuswahlSzene(BasisSzene):
         self.schrift_name = pygame.font.Font(None, 32)
         self.schrift_level = pygame.font.Font(None, 24)
         self.schrift_button = pygame.font.Font(None, 36)
+        self._laden_angefordert = False  # Erst beim ersten updaten() laden
 
         self._layout_berechnen()
-        self.netzwerk_client.nachricht_senden(CHARAKTERE_LADEN, {})
 
     def _layout_berechnen(self):
         b = config.AUFLOESUNG_BREITE
@@ -87,6 +87,11 @@ class CharakterAuswahlSzene(BasisSzene):
             self.szenen_manager.szene_wechseln(LoginSzene(self.szenen_manager, self.netzwerk_client))
 
     def updaten(self, delta_zeit: float):
+        # Erst laden wenn die Szene wirklich aktiv ist (nach dem Fade-Übergang)
+        if not self._laden_angefordert:
+            self.netzwerk_client.nachricht_senden(CHARAKTERE_LADEN, {})
+            self._laden_angefordert = True
+
         while True:
             nachricht = self.netzwerk_client.nachricht_holen()
             if not nachricht:

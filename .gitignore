@@ -1,44 +1,42 @@
-# Build-Ausgaben
+# ==================== BUILD ====================
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 dist/
 build/
 *.spec
+config.py.bak
 
-# Datenbanken (Spielerdaten - nicht ins Repo!)
+# ==================== DATENBANKEN ====================
 *.sqlite
 *.db
 
-# Temporäre Build-Dateien
-config.py.bak
-
-# Logs
-*.log
-
-# IDE & Tools
-.vscode/
-.idea/
-.claude/
-
-# OpenCode / KI-Assistent Dateien
-Skills/
-FORTSCHRITT.md
-anforderungen.txt
-klassen-definitionen.md
-
-# Server (läuft nur bei Lutz, nicht für Spieler)
+# ==================== SERVER (nur lokal bei Lutz) ====================
 server/
 server_start.py
 server_start.bat
 
-# Debug & Tests
-db_check.py
-test_heartbeat.py
+# ==================== TESTS & DEBUG ====================
 tests/
-klassen.json
-build.bat
-
-# Tests
+test_heartbeat.py
+db_check.py
+test_temp*.db
 .pytest_cache/
-tests/__pycache__/
+
+# ==================== OPENCODE / KI-ASSISTENT ====================
+Skills/
+.claude/
+FORTSCHRITT.md
+anforderungen.txt
+klassen-definitionen.md
+klassen.json
+
+# ==================== IDE ====================
+.vscode/
+.idea/
+
+# ==================== SONSTIGES ====================
+*.log
+start.bat
+build.bat

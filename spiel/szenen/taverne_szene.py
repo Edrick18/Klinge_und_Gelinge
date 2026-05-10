@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from ..kern.basis_szene import BasisSzene
 from netzwerk.nachrichten import (
     QUESTS_LADEN, QUESTS_ANTWORT, QUEST_ANNEHMEN, QUEST_ANGENOMMEN,
-    QUEST_AUFLOESEN, QUEST_TIMER_REDUZIEREN, QUEST_TIMER_REDUZIERT, QUEST_ERGEBNIS, SCHLUESSEL_QUESTS, SCHLUESSEL_QUEST_ID,
+    QUEST_AUFLOESEN, QUEST_ERGEBNIS, SCHLUESSEL_QUESTS, SCHLUESSEL_QUEST_ID,
     SCHLUESSEL_QUEST_ERGEBNIS,
     REISE_STATUS_LADEN, REISE_STATUS_ANTWORT
 )
@@ -68,7 +68,6 @@ class TaverneSzene(BasisSzene):
         self.karten_start_x = (b - gesamt_breite) // 2
 
         self.zurueck_button = pygame.Rect(20, h - 50, 120, 35)
-        self.test_timer_button = pygame.Rect(b - 170, h - 50, 150, 35)
 
     def updaten(self, delta_zeit: float):
         if not self.quests_angefragt:
@@ -118,16 +117,6 @@ class TaverneSzene(BasisSzene):
                             self.quests[i] = self.aktive_quest
                             break
 
-            elif typ == QUEST_TIMER_REDUZIERT:
-                quest_id = daten.get("quest_id")
-                gestartet_am = daten.get("gestartet_am")
-                if self.aktive_quest and self.aktive_quest["id"] == quest_id:
-                    self.aktive_quest["gestartet_am"] = gestartet_am
-                    for i, q in enumerate(self.quests):
-                        if q["id"] == quest_id:
-                            self.quests[i]["gestartet_am"] = gestartet_am
-                            break
-
             elif typ == QUEST_ERGEBNIS:
                 ergebnis = daten.get(SCHLUESSEL_QUEST_ERGEBNIS, {})
                 print(f"Quest Ergebnis empfangen: {ergebnis}")
@@ -174,12 +163,7 @@ class TaverneSzene(BasisSzene):
                     if self.zurueck_button.collidepoint(event.pos):
                         self._zurueck_zur_uebersicht()
                     elif not self.reise_aktiv:
-                        if self.aktive_quest and self.test_timer_button.collidepoint(event.pos):
-                            self.netzwerk_client.nachricht_senden(QUEST_TIMER_REDUZIEREN, {
-                                SCHLUESSEL_QUEST_ID: self.aktive_quest["id"]
-                            })
-                        else:
-                            self._quest_karten_klick(event.pos)
+                        self._quest_karten_klick(event.pos)
 
     def _quest_karten_klick(self, pos):
         if self.aktive_quest:
@@ -261,12 +245,6 @@ class TaverneSzene(BasisSzene):
         zurueck_rect = zurueck_text.get_rect(center=self.zurueck_button.center)
         flaeche.blit(zurueck_text, zurueck_rect)
 
-        if self.aktive_quest:
-            pygame.draw.rect(flaeche, config.FARBE_PANEL, self.test_timer_button)
-            pygame.draw.rect(flaeche, config.FARBE_AKZENT, self.test_timer_button, 1)
-            test_text = self.schrift_klein.render("⏩ Timer auf 3s", True, config.FARBE_AKZENT)
-            test_rect = test_text.get_rect(center=self.test_timer_button.center)
-            flaeche.blit(test_text, test_rect)
 
     def _quest_karte_zeichnen(self, flaeche, quest, x, y, breite, hoehe, index):
         rand_farbe = config.FARBE_RAND

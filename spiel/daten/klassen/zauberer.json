@@ -1,0 +1,777 @@
+{
+  "basis": {
+    "id": "zauberer",
+    "name": "Zauberer",
+    "grundwert": "weisheit",
+    "beschreibung": "Elementare Macht durch Ladungen von Feuer, Eis und Blitz.",
+    "kern_mechanik": {
+      "name": "Elementar-Ladungen",
+      "start": 0,
+      "maximum": 3,
+      "aufbau": "nur_durch_skills",
+      "verfall": true,
+      "verfall_dauer": 30,
+      "effekt": "Ladungen kombinieren für verstärkte Effekte",
+      "ladungs_typen": ["feuer", "eis", "blitz"],
+      "kombinationen": {
+        "feuer_eis": {
+          "name": "Explosion",
+          "effekt": "+50% mag. Schaden sofort",
+          "verbraucht": ["feuer", "eis"]
+        },
+        "eis_blitz": {
+          "name": "Schockfrost",
+          "effekt": "Gegner Atk-Speed -30% für 5s",
+          "verbraucht": ["eis", "blitz"]
+        },
+        "feuer_blitz": {
+          "name": "Plasma",
+          "effekt": "DoT 3% HP/2s für 8s",
+          "verbraucht": ["feuer", "blitz"]
+        }
+      }
+    },
+    "skill_baum": {
+      "nodes": [
+        {
+          "id": "zau_ladungs_dauer",
+          "name": "Ladungs-Dauer",
+          "beschreibung": "Ladungen verfallen 3s später",
+          "beschreibung_template": "Ladungen verfallen +{dauer}s später",
+          "beschreibung_werte": {"dauer": 3},
+          "max_stufen": 3,
+          "benoetigt": [],
+          "schaltet_skill_frei": null,
+          "position": {"reihe": 0, "spalte": 1}
+        },
+        {
+          "id": "zau_kombinations_staerke",
+          "name": "Kombinations-Stärke",
+          "beschreibung": "Kombinations-Effekte +10% stärker",
+          "beschreibung_template": "Kombinations-Effekte +{bonus}% stärker",
+          "beschreibung_werte": {"bonus": 10},
+          "max_stufen": 3,
+          "benoetigt": ["zau_ladungs_dauer"],
+          "schaltet_skill_frei": "feuerball",
+          "position": {"reihe": 1, "spalte": 0}
+        },
+        {
+          "id": "zau_schnelle_entladung",
+          "name": "Schnelle Entladung",
+          "beschreibung": "Elementar-Entladung kürzerer Cooldown",
+          "beschreibung_template": "Elementar-Entladung -{cd}s Cooldown",
+          "beschreibung_werte": {"cd": 2},
+          "max_stufen": 2,
+          "benoetigt": ["zau_ladungs_dauer"],
+          "schaltet_skill_frei": "eisnadeln",
+          "position": {"reihe": 1, "spalte": 2}
+        },
+        {
+          "id": "zau_feuer_intensitaet",
+          "name": "Feuer-Intensität",
+          "beschreibung": "Plasma DoT-Schaden höher",
+          "beschreibung_template": "Plasma DoT +{bonus}% Schaden",
+          "beschreibung_werte": {"bonus": 5},
+          "max_stufen": 2,
+          "benoetigt": ["zau_kombinations_staerke"],
+          "schaltet_skill_frei": "blitzkette",
+          "position": {"reihe": 2, "spalte": 0}
+        },
+        {
+          "id": "zau_frost_tiefe",
+          "name": "Frost-Tiefe",
+          "beschreibung": "Schockfrost-Verlangsamung stärker",
+          "beschreibung_template": "Schockfrost Verlangsamung +{wert}%",
+          "beschreibung_werte": {"wert": 10},
+          "max_stufen": 2,
+          "benoetigt": ["zau_schnelle_entladung"],
+          "schaltet_skill_frei": "arkane_explosion",
+          "position": {"reihe": 2, "spalte": 2}
+        },
+        {
+          "id": "zau_blitz_leitfaehigkeit",
+          "name": "Blitz-Leitfähigkeit",
+          "beschreibung": "Blitz-Ladungen geben +1 Blitz statt 1",
+          "beschreibung_template": "Blitz-Ladungen geben +{bonus} statt 1",
+          "beschreibung_werte": {"bonus": 1},
+          "max_stufen": 1,
+          "benoetigt": ["zau_feuer_intensitaet"],
+          "schaltet_skill_frei": "elementar_entladung",
+          "position": {"reihe": 3, "spalte": 0}
+        },
+        {
+          "id": "zau_arkane_effizienz",
+          "name": "Arkane-Effizienz",
+          "beschreibung": "Arkane Explosion behält 1 Ladung pro Typ nach Einsatz",
+          "beschreibung_template": "Behält {anzahl} Ladung pro Typ",
+          "beschreibung_werte": {"anzahl": 1},
+          "max_stufen": 2,
+          "benoetigt": ["zau_frost_tiefe"],
+          "schaltet_skill_frei": "manaschild",
+          "position": {"reihe": 3, "spalte": 2}
+        },
+        {
+          "id": "zau_elementarmeister_node",
+          "name": "Elementarmeister-Node",
+          "beschreibung": "Schaltet Elementarmeister frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Elementarmeister"},
+          "max_stufen": 2,
+          "benoetigt": ["zau_blitz_leitfaehigkeit"],
+          "schaltet_skill_frei": "elementarmeister",
+          "position": {"reihe": 4, "spalte": 0}
+        },
+        {
+          "id": "zau_resonanz_node",
+          "name": "Resonanz-Node",
+          "beschreibung": "Schaltet Resonanz frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Resonanz"},
+          "max_stufen": 2,
+          "benoetigt": ["zau_arkane_effizienz"],
+          "schaltet_skill_frei": "resonanz",
+          "position": {"reihe": 4, "spalte": 2}
+        }
+      ],
+      "skills": [
+        {
+          "id": "feuerball",
+          "name": "Feuerball",
+          "typ": "aktiv",
+          "cooldown": 5.0,
+          "mana_kosten": 30,
+          "beschreibung": "140% mag. Schaden, fügt 1 Feuer-Ladung hinzu.",
+          "beschreibung_template": "{schaden}% mag. Schaden, fügt {ladungen} Feuer-Ladung hinzu.",
+          "beschreibung_werte": {"schaden": 140, "ladungen": 1},
+          "mechanik": "elementar_skill",
+          "element": "feuer",
+          "ladungen": 1,
+          "skalierung": {"basis": 1.4, "pro_level": 0.05}
+        },
+        {
+          "id": "eisnadeln",
+          "name": "Eisnadeln",
+          "typ": "aktiv",
+          "cooldown": 5.0,
+          "mana_kosten": 30,
+          "beschreibung": "120% mag. Schaden, fügt 1 Eis-Ladung hinzu.",
+          "beschreibung_template": "{schaden}% mag. Schaden, fügt {ladungen} Eis-Ladung hinzu.",
+          "beschreibung_werte": {"schaden": 120, "ladungen": 1},
+          "mechanik": "elementar_skill",
+          "element": "eis",
+          "ladungen": 1,
+          "skalierung": {"basis": 1.2, "pro_level": 0.04}
+        },
+        {
+          "id": "blitzkette",
+          "name": "Blitzkette",
+          "typ": "aktiv",
+          "cooldown": 5.0,
+          "mana_kosten": 35,
+          "beschreibung": "160% mag. Schaden, fügt 1 Blitz-Ladung hinzu.",
+          "beschreibung_template": "{schaden}% mag. Schaden, fügt {ladungen} Blitz-Ladung hinzu.",
+          "beschreibung_werte": {"schaden": 160, "ladungen": 1},
+          "mechanik": "elementar_skill",
+          "element": "blitz",
+          "ladungen": 1,
+          "skalierung": {"basis": 1.6, "pro_level": 0.05}
+        },
+        {
+          "id": "arkane_explosion",
+          "name": "Arkane Explosion",
+          "typ": "aktiv",
+          "cooldown": 12.0,
+          "mana_kosten": 60,
+          "beschreibung": "Verbraucht alle Ladungen, Schaden steigt mit Anzahl.",
+          "beschreibung_template": "Verbraucht alle Ladungen, Schaden +{bonus}% pro Ladung.",
+          "beschreibung_werte": {"bonus": 50},
+          "mechanik": "ladungen_verbrauchen",
+          "skalierung": {"basis": 0.8, "pro_level": 0.05}
+        },
+        {
+          "id": "elementar_entladung",
+          "name": "Elementar-Entladung",
+          "typ": "aktiv",
+          "cooldown": 15.0,
+          "mana_kosten": 50,
+          "beschreibung": "Löst sofort eine Kombination aus wenn zwei verschiedene Ladungstypen vorhanden.",
+          "beschreibung_template": "Löst sofort eine Kombination aus bei {anzahl}+ Ladungstypen.",
+          "beschreibung_werte": {"anzahl": 2},
+          "mechanik": "kombination_ausloesen",
+          "skalierung": {"basis": 1.0, "pro_level": 0.03}
+        },
+        {
+          "id": "manaschild",
+          "name": "Manaschild",
+          "typ": "passiv",
+          "mana_reserviert": 15,
+          "beschreibung": "Bei 2+ Ladungen eines Typs wirkt Mana als HP-Puffer.",
+          "beschreibung_template": "Bei {schwelle}+ Ladungen eines Typs wirkt Mana als HP-Puffer.",
+          "beschreibung_werte": {"schwelle": 2},
+          "mechanik": "mana_als_hp",
+          "ladungen_schwelle": 2,
+          "skalierung": {"basis": 0.5, "pro_level": 0.02}
+        },
+        {
+          "id": "elementarmeister",
+          "name": "Elementarmeister",
+          "typ": "passiv",
+          "mana_reserviert": 20,
+          "beschreibung": "Kombinationseffekte dauern 2s länger.",
+          "beschreibung_template": "Kombinationseffekte dauern +{dauer}s länger.",
+          "beschreibung_werte": {"dauer": 2},
+          "mechanik": "kombination_verlaengern",
+          "skalierung": {"basis": 2.0, "pro_level": 0}
+        },
+        {
+          "id": "resonanz",
+          "name": "Resonanz",
+          "typ": "passiv",
+          "mana_reserviert": 25,
+          "beschreibung": "Jede neue Ladung die einen Typ auf 3 bringt gibt +20% mag. Schaden auf nächsten Angriff.",
+          "beschreibung_template": "Neue Ladung auf {max} gibt +{bonus}% mag. Schaden.",
+          "beschreibung_werte": {"max": 3, "bonus": 20},
+          "mechanik": "resonanz_bonus",
+          "schaden_bonus": 0.20,
+          "skalierung": {"basis": 0.20, "pro_level": 0.01}
+        }
+      ]
+    }
+  },
+  "spezialisierungen": {
+    "pyromant": {
+      "id": "pyromant",
+      "name": "Pyromant",
+      "basis_klasse": "zauberer",
+      "beschreibung": "Feuer-Ladungen maximieren, Brennen als Hauptschaden.",
+      "neue_mechanik": {
+        "name": "Inferno",
+        "beschreibung": "Bei 3 Feuer-Ladungen brennt der Gegner permanent mit verstärktem DoT (+50% Brennen-Schaden) solange Feuer-Ladungen auf 3 bleiben.",
+        "schwelle": 3,
+        "brennen_bonus": 0.50
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "pyro_inferno_schwelle",
+            "name": "Inferno-Schwelle",
+            "beschreibung": "Aktiviert bei 2 Feuer-Ladungen",
+            "beschreibung_template": "Aktiviert bei {schwelle} Feuer-Ladungen",
+            "beschreibung_werte": {"schwelle": 2},
+            "max_stufen": 1,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "pyro_feuersturm_ladungen",
+            "name": "Feuersturm-Ladungen",
+            "beschreibung": "+1 Feuer-Ladung zusätzlich",
+            "beschreibung_template": "+{bonus} Feuer-Ladung zusätzlich",
+            "beschreibung_werte": {"bonus": 1},
+            "max_stufen": 2,
+            "benoetigt": ["pyro_inferno_schwelle"],
+            "schaltet_skill_frei": "feuersturm",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "pyro_ascheregen_bonus",
+            "name": "Ascheregen-Bonus",
+            "beschreibung": "+10% Brennen-Verstärkung",
+            "beschreibung_template": "+{bonus}% Brennen-Verstärkung",
+            "beschreibung_werte": {"bonus": 10},
+            "max_stufen": 2,
+            "benoetigt": ["pyro_inferno_schwelle"],
+            "schaltet_skill_frei": "ascheregen",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "pyro_glut_mantel_dauer",
+            "name": "Glutmantel-Dauer",
+            "beschreibung": "+2s",
+            "beschreibung_template": "+{dauer}s",
+            "beschreibung_werte": {"dauer": 2},
+            "max_stufen": 2,
+            "benoetigt": ["pyro_feuersturm_ladungen"],
+            "schaltet_skill_frei": "glutmantel",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "pyro_brennen_intensitaet",
+            "name": "Brennen-Intensität",
+            "beschreibung": "Basis-Brennen-Schaden höher",
+            "beschreibung_template": "Basis-Brennen +{bonus}% Schaden",
+            "beschreibung_werte": {"bonus": 5},
+            "max_stufen": 3,
+            "benoetigt": ["pyro_ascheregen_bonus"],
+            "schaltet_skill_frei": "feuerwall",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "pyro_ewige_flamme_node",
+            "name": "Ewige-Flamme-Node",
+            "beschreibung": "Schaltet Ewige Flamme frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Ewige Flamme"},
+            "max_stufen": 2,
+            "benoetigt": ["pyro_glut_mantel_dauer"],
+            "schaltet_skill_frei": "ewige_flamme",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "pyro_brandmeister_node",
+            "name": "Brandmeister-Node",
+            "beschreibung": "Schaltet Brandmeister frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Brandmeister"},
+            "max_stufen": 2,
+            "benoetigt": ["pyro_brennen_intensitaet"],
+            "schaltet_skill_frei": "brandmeister",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "feuersturm",
+            "name": "Feuersturm",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 45,
+            "beschreibung": "130% mag. Schaden, fügt 2 Feuer-Ladungen hinzu statt 1.",
+            "beschreibung_template": "{schaden}% mag. Schaden, fügt {ladungen} Feuer-Ladungen hinzu.",
+            "beschreibung_werte": {"schaden": 130, "ladungen": 2},
+            "mechanik": "elementar_skill",
+            "element": "feuer",
+            "ladungen": 2,
+            "skalierung": {"basis": 1.3, "pro_level": 0.05}
+          },
+          {
+            "id": "ascheregen",
+            "name": "Ascheregen",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 55,
+            "beschreibung": "Verbraucht alle Feuer-Ladungen, Brennen-Schaden der nächsten 10s +80%.",
+            "beschreibung_template": "Verbraucht alle Feuer-Ladungen, Brennen der nächsten {dauer}s +{bonus}%.",
+            "beschreibung_werte": {"dauer": 10, "bonus": 80},
+            "mechanik": "brennen_verstaerken",
+            "dauer": 10.0,
+            "bonus": 0.80,
+            "skalierung": {"basis": 0.80, "pro_level": 0.03}
+          },
+          {
+            "id": "glutmantel",
+            "name": "Glutmantel",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 40,
+            "beschreibung": "1 Feuer-Ladung, Gegner nimmt +15% mehr Brennen-Schaden für 8s.",
+            "beschreibung_template": "{ladungen} Feuer-Ladung, Gegner +{bonus}% Brennen für {dauer}s.",
+            "beschreibung_werte": {"ladungen": 1, "bonus": 15, "dauer": 8},
+            "mechanik": "brennen_schwache",
+            "element": "feuer",
+            "ladungen": 1,
+            "schaden_bonus": 0.15,
+            "dauer": 8.0,
+            "skalierung": {"basis": 0.15, "pro_level": 0.01}
+          },
+          {
+            "id": "feuerwall",
+            "name": "Feuerwall",
+            "typ": "aktiv",
+            "cooldown": 20.0,
+            "mana_kosten": 60,
+            "beschreibung": "Erzeugt 3s Brennen-Barriere.",
+            "beschreibung_template": "Erzeugt {dauer}s Brennen-Barriere",
+            "beschreibung_werte": {"dauer": 3},
+            "mechanik": "brennen_barriere",
+            "dauer": 3.0,
+            "skalierung": {"basis": 0.05, "pro_level": 0.002}
+          },
+          {
+            "id": "ewige_flamme",
+            "name": "Ewige Flamme",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Feuer-Ladungen verfallen 4s später als andere Ladungen.",
+            "beschreibung_template": "Feuer-Ladungen verfallen +{verzoegerung}s später",
+            "beschreibung_werte": {"verzoegerung": 4},
+            "mechanik": "ladung_verfall_verzoegerung",
+            "element": "feuer",
+            "verzoegerung": 4.0,
+            "skalierung": {"basis": 4.0, "pro_level": 0}
+          },
+          {
+            "id": "brandmeister",
+            "name": "Brandmeister",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Inferno-Bonus steigt auf +70% Brennen-Schaden.",
+            "beschreibung_template": "Inferno-Bonus steigt auf +{bonus}% Brennen",
+            "beschreibung_werte": {"bonus": 70},
+            "mechanik": "inferno_verstaerken",
+            "bonus": 0.70,
+            "skalierung": {"basis": 0.70, "pro_level": 0.02}
+          }
+        ]
+      }
+    },
+    "frostmagier": {
+      "id": "frostmagier",
+      "name": "Frostmagier",
+      "basis_klasse": "zauberer",
+      "beschreibung": "Eis-Ladungen für Kontrolle.",
+      "neue_mechanik": {
+        "name": "Einfrieren",
+        "beschreibung": "Bei 3 Eis-Ladungen und einer Kombination die Eis verbraucht wird der Gegner für 2s komplett eingefroren.",
+        "schwelle": 3,
+        "dauer": 2.0,
+        "pro_kampf": true
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "frost_einfrieren_dauer",
+            "name": "Einfrieren-Dauer",
+            "beschreibung": "+0.5s",
+            "beschreibung_template": "+{dauer}s",
+            "beschreibung_werte": {"dauer": 0.5},
+            "max_stufen": 2,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "frost_eissturm_verlangsamung",
+            "name": "Eissturm-Verlangsamung",
+            "beschreibung": "+5% Atk-Speed-Reduktion",
+            "beschreibung_template": "+{wert}% Atk-Speed-Reduktion",
+            "beschreibung_werte": {"wert": 5},
+            "max_stufen": 3,
+            "benoetigt": ["frost_einfrieren_dauer"],
+            "schaltet_skill_frei": "eissturm",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "frost_frostpanzer_ruestung",
+            "name": "Frostpanzer-Rüstung",
+            "beschreibung": "+5% Rüstung",
+            "beschreibung_template": "+{wert}% Rüstung",
+            "beschreibung_werte": {"wert": 5},
+            "max_stufen": 2,
+            "benoetigt": ["frost_einfrieren_dauer"],
+            "schaltet_skill_frei": "frostpanzer",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "frost_gletscherschlag_skalierung",
+            "name": "Gletscherschlag-Skalierung",
+            "beschreibung": "+5% Schaden pro Ladung",
+            "beschreibung_template": "+{bonus}% Schaden pro Ladung",
+            "beschreibung_werte": {"bonus": 5},
+            "max_stufen": 2,
+            "benoetigt": ["frost_eissturm_verlangsamung"],
+            "schaltet_skill_frei": "gletscherschlag",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "frost_eiszeit_cooldown",
+            "name": "Eiszeit-Cooldown",
+            "beschreibung": "-4s",
+            "beschreibung_template": "-{wert}s",
+            "beschreibung_werte": {"wert": 4},
+            "max_stufen": 2,
+            "benoetigt": ["frost_frostpanzer_ruestung"],
+            "schaltet_skill_frei": "eiszeit",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "frost_permafrost_node",
+            "name": "Permafrost-Node",
+            "beschreibung": "Schaltet Permafrost frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Permafrost"},
+            "max_stufen": 2,
+            "benoetigt": ["frost_gletscherschlag_skalierung"],
+            "schaltet_skill_frei": "permafrost",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "frost_eisige_praesenz_node",
+            "name": "Eisige-Präsenz-Node",
+            "beschreibung": "Schaltet Eisige Präsenz frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Eisige Präsenz"},
+            "max_stufen": 2,
+            "benoetigt": ["frost_eiszeit_cooldown"],
+            "schaltet_skill_frei": "eisige_praesenz",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "eissturm",
+            "name": "Eissturm",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 45,
+            "beschreibung": "110% mag. Schaden, fügt 2 Eis-Ladungen hinzu.",
+            "beschreibung_template": "{schaden}% mag. Schaden, +{ladungen} Eis-Ladung",
+            "beschreibung_werte": {"schaden": 110, "ladungen": 2},
+            "mechanik": "elementar_skill",
+            "element": "eis",
+            "ladungen": 2,
+            "skalierung": {"basis": 1.1, "pro_level": 0.04}
+          },
+          {
+            "id": "frostpanzer",
+            "name": "Frostpanzer",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 40,
+            "beschreibung": "1 Eis-Ladung, eigene Rüstung +20% für 6s.",
+            "beschreibung_template": "{ladungen} Eis-Ladung, Rüstung +{wert}% für {dauer}s.",
+            "beschreibung_werte": {"ladungen": 1, "wert": 20, "dauer": 6},
+            "mechanik": "eigene_buff",
+            "element": "eis",
+            "ladungen": 1,
+            "buff": "ruestung",
+            "wert": 0.20,
+            "dauer": 6.0,
+            "skalierung": {"basis": 0.20, "pro_level": 0.01}
+          },
+          {
+            "id": "gletscherschlag",
+            "name": "Gletscherschlag",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 50,
+            "beschreibung": "Verbraucht alle Eis-Ladungen, Schaden skaliert mit Anzahl.",
+            "beschreibung_template": "Verbraucht alle Eis-Ladungen, Schaden skaliert",
+            "beschreibung_werte": {},
+            "mechanik": "ladungen_verbrauchen",
+            "element": "eis",
+            "skalierung": {"basis": 0.6, "pro_level": 0.05}
+          },
+          {
+            "id": "eiszeit",
+            "name": "Eiszeit",
+            "typ": "aktiv",
+            "cooldown": 25.0,
+            "mana_kosten": 60,
+            "beschreibung": "Setzt alle Eis-Ladungen auf Maximum sofort.",
+            "beschreibung_template": "Setzt alle Eis-Ladungen auf {maximum} sofort.",
+            "beschreibung_werte": {"maximum": 3},
+            "mechanik": "ladungen_auffüllen",
+            "element": "eis",
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "permafrost",
+            "name": "Permafrost",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Verlangsamungs-Effekte dauern 2s länger.",
+            "beschreibung_template": "Verlangsamung +{dauer}s länger",
+            "beschreibung_werte": {"dauer": 2},
+            "mechanik": "verlangsamung_verlaengern",
+            "skalierung": {"basis": 2.0, "pro_level": 0}
+          },
+          {
+            "id": "eisige_praesenz",
+            "name": "Eisige Präsenz",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Bei 2+ Eis-Ladungen hat Gegner permanent -10% Atk-Speed.",
+            "beschreibung_template": "Bei {schwelle}+ Eis-Ladungen: -{wert}% Atk-Speed",
+            "beschreibung_werte": {"schwelle": 2, "wert": 10},
+            "mechanik": "permanente_verlangsamung",
+            "ladungen_schwelle": 2,
+            "verlangsamung": 0.10,
+            "skalierung": {"basis": 0.10, "pro_level": 0.005}
+          }
+        ]
+      }
+    },
+    "sturmrufer": {
+      "id": "sturmrufer",
+      "name": "Sturmrufer",
+      "basis_klasse": "zauberer",
+      "beschreibung": "Blitz-Ladungen für Geschwindigkeit.",
+      "neue_mechanik": {
+        "name": "Sturmform",
+        "beschreibung": "Bei 3 Blitz-Ladungen wechselt der Charakter in Sturmform — Auto-Attacks haben 30% Chance einen zweiten Treffer auszulösen.",
+        "schwelle": 3,
+        "doppeltreffer_chance": 0.30
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "sturm_sturmform_chance",
+            "name": "Sturmform-Chance",
+            "beschreibung": "+5% Doppeltreffer-Chance",
+            "beschreibung_template": "+{wert}% Doppeltreffer-Chance",
+            "beschreibung_werte": {"wert": 5},
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "sturm_blitzschlag_ladungen",
+            "name": "Blitzschlag-Ladungen",
+            "beschreibung": "+1 Blitz-Ladung zusätzlich",
+            "beschreibung_template": "+{bonus} Blitz-Ladung zusätzlich",
+            "beschreibung_werte": {"bonus": 1},
+            "max_stufen": 2,
+            "benoetigt": ["sturm_sturmform_chance"],
+            "schaltet_skill_frei": "blitzschlag",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "sturm_sturmschritt_dauer",
+            "name": "Sturmschritt-Dauer",
+            "beschreibung": "+2s",
+            "beschreibung_template": "+{dauer}s",
+            "beschreibung_werte": {"dauer": 2},
+            "max_stufen": 2,
+            "benoetigt": ["sturm_sturmform_chance"],
+            "schaltet_skill_frei": "sturmschritt",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "sturm_kettenblitz_treffer",
+            "name": "Kettenblitz-Treffer",
+            "beschreibung": "+1 Treffer bei vollem Einsatz",
+            "beschreibung_template": "+{bonus} Treffer",
+            "beschreibung_werte": {"bonus": 1},
+            "max_stufen": 2,
+            "benoetigt": ["sturm_blitzschlag_ladungen"],
+            "schaltet_skill_frei": "kettenblitz",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "sturm_gewitterruf_cooldown",
+            "name": "Gewitterruf-Cooldown",
+            "beschreibung": "-3s",
+            "beschreibung_template": "-{wert}s",
+            "beschreibung_werte": {"wert": 3},
+            "max_stufen": 2,
+            "benoetigt": ["sturm_sturmschritt_dauer"],
+            "schaltet_skill_frei": "gewitterruf",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "sturm_statisch_node",
+            "name": "Statisch-Node",
+            "beschreibung": "Schaltet Statisch frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Statisch"},
+            "max_stufen": 2,
+            "benoetigt": ["sturm_kettenblitz_treffer"],
+            "schaltet_skill_frei": "statisch",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "sturm_blitzreflexe_node",
+            "name": "Blitzreflexe-Node",
+            "beschreibung": "Schaltet Blitzreflexe frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Blitzreflexe"},
+            "max_stufen": 2,
+            "benoetigt": ["sturm_gewitterruf_cooldown"],
+            "schaltet_skill_frei": "blitzreflexe",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "blitzschlag",
+            "name": "Blitzschlag",
+            "typ": "aktiv",
+            "cooldown": 4.0,
+            "mana_kosten": 35,
+            "beschreibung": "150% mag. Schaden, fügt 2 Blitz-Ladungen hinzu.",
+            "beschreibung_template": "{schaden}% mag. Schaden, +{ladungen} Blitz-Ladungen",
+            "beschreibung_werte": {"schaden": 150, "ladungen": 2},
+            "mechanik": "elementar_skill",
+            "element": "blitz",
+            "ladungen": 2,
+            "skalierung": {"basis": 1.5, "pro_level": 0.05}
+          },
+          {
+            "id": "sturmschritt",
+            "name": "Sturmschritt",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 40,
+            "beschreibung": "1 Blitz-Ladung, eigene Bewegungsgeschwindigkeit +20% für 4s.",
+            "beschreibung_template": "{ladungen} Blitz-Ladung, +{wert}% Bewegungsgeschwindigkeit für {dauer}s",
+            "beschreibung_werte": {"ladungen": 1, "wert": 20, "dauer": 4},
+            "mechanik": "eigene_buff",
+            "element": "blitz",
+            "ladungen": 1,
+            "buff": "bewegung",
+            "wert": 0.20,
+            "dauer": 4.0,
+            "skalierung": {"basis": 0.20, "pro_level": 0.01}
+          },
+          {
+            "id": "kettenblitz",
+            "name": "Kettenblitz",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 55,
+            "beschreibung": "Verbraucht 2 Blitz-Ladungen, springt bis zu 3 Ziele.",
+            "beschreibung_template": "Verbraucht {ladungen} Blitz-Ladungen, springt bis zu {ziele} Ziele",
+            "beschreibung_werte": {"ladungen": 2, "ziele": 3},
+            "mechanik": "ketten_skill",
+            "element": "blitz",
+            "ladungen": 2,
+            "max_ziele": 3,
+            "skalierung": {"basis": 0.8, "pro_level": 0.03}
+          },
+          {
+            "id": "gewitterruf",
+            "name": "Gewitterruf",
+            "typ": "aktiv",
+            "cooldown": 18.0,
+            "mana_kosten": 60,
+            "beschreibung": "Erzeugt 3 Blitz-Ladungen sofort.",
+            "beschreibung_template": "Erzeugt {ladungen} Blitz-Ladungen sofort",
+            "beschreibung_werte": {"ladungen": 3},
+            "mechanik": "ladungen_erzeugen",
+            "element": "blitz",
+            "ladungen": 3,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "statisch",
+            "name": "Statisch",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Jeder 3. Auto-Angriff erzeugt 1 zusätzliche Blitz-Ladung.",
+            "beschreibung_template": "Jeder {n}. Auto-Angriff erzeugt +1 Blitz-Ladung",
+            "beschreibung_werte": {"n": 3},
+            "mechanik": "ladung_bei_attack",
+            "element": "blitz",
+            "intervall": 3,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "blitzreflexe",
+            "name": "Blitzreflexe",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "In Sturmform: Angriffsgeschwindigkeit +15%.",
+            "beschreibung_template": "In Sturmform: Angriffsgeschwindigkeit +{wert}%",
+            "beschreibung_werte": {"wert": 15},
+            "mechanik": "sturmform_bonus",
+            "atk_speed_bonus": 0.15,
+            "skalierung": {"basis": 0.15, "pro_level": 0.01}
+          }
+        ]
+      }
+    }
+  }
+}

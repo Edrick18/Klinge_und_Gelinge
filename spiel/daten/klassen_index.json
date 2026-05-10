@@ -1,0 +1,34 @@
+{
+  "basis_klassen": {
+    "krieger": {
+      "datei": "klassen/krieger.json",
+      "grundwert": "staerke",
+      "spezialisierungen": ["berserker", "ritter", "paladin"]
+    },
+    "waechter": {
+      "datei": "klassen/waechter.json",
+      "grundwert": "vitalitaet",
+      "spezialisierungen": ["bastian", "blutmagier", "kriegspriester"]
+    },
+    "zauberer": {
+      "datei": "klassen/zauberer.json",
+      "grundwert": "weisheit",
+      "spezialisierungen": ["pyromant", "frostmagier", "sturmrufer"]
+    },
+    "schicksalsritter": {
+      "datei": "klassen/schicksalsritter.json",
+      "grundwert": "glueck",
+      "spezialisierungen": ["gluecksbringer", "schicksalsweber", "raecher"]
+    },
+    "schatten": {
+      "datei": "klassen/schatten.json",
+      "grundwert": "beweglichkeit",
+      "spezialisierungen": ["assassine", "klingentraenzer", "phantom"]
+    },
+    "herold": {
+      "datei": "klassen/herold.json",
+      "grundwert": "charisma",
+      "spezialisierungen": ["kriegsherr", "hexer", "seelenbinder"]
+    }
+  }
+}

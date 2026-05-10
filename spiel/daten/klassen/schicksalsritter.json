@@ -1,0 +1,637 @@
+{
+  "basis": {
+    "id": "schicksalsritter",
+    "name": "Schicksalsritter",
+    "grundwert": "glueck",
+    "beschreibung": "Schicksal durch Fortune-Stapel kontrollieren.",
+    "kern_mechanik": {
+      "name": "Fortune-Stapel",
+      "start": 0,
+      "maximum": 10,
+      "aufbau": {
+        "krit": 1,
+        "ausweichen": 2
+      },
+      "verfall": false,
+      "effekt": "Bei 10 Stapeln: garantierter Krit mit doppeltem Krit-Schaden, Reset auf 5",
+      "krit_multiplikator": 2.0,
+      "reset_auf": 5
+    },
+    "skill_baum": {
+"nodes": [
+        {
+          "id": "skr_fortune_aufbau",
+          "name": "Fortune-Aufbau",
+          "beschreibung": "Krits geben +1 Fortune zusätzlich",
+          "beschreibung_template": "Krits geben +{bonus} Fortune zusätzlich",
+          "beschreibung_werte": {"bonus": 1},
+          "max_stufen": 3,
+          "benoetigt": [],
+          "schaltet_skill_frei": null,
+          "position": {"reihe": 0, "spalte": 1}
+        },
+        {
+          "id": "skr_fortune_schwelle",
+          "name": "Fortune-Schwelle",
+          "beschreibung": "Passive Skills aktivieren bei 1 weniger Fortune-Stapel",
+          "beschreibung_template": "Passive bei {reduktion} weniger Stapel",
+          "beschreibung_werte": {"reduktion": 1},
+          "max_stufen": 2,
+          "benoetigt": ["skr_fortune_aufbau"],
+          "schaltet_skill_frei": "gluckschlag",
+          "position": {"reihe": 1, "spalte": 0}
+        },
+        {
+          "id": "skr_raecher_kraft",
+          "name": "Rächer-Kraft",
+          "beschreibung": "Rächer skaliert besser mit verbrauchten Stapeln",
+          "beschreibung_template": "Rächer +{bonus}% Schaden pro Stapel",
+          "beschreibung_werte": {"bonus": 5},
+          "max_stufen": 2,
+          "benoetigt": ["skr_fortune_aufbau"],
+          "schaltet_skill_frei": "schicksalsdrehung",
+          "position": {"reihe": 1, "spalte": 2}
+        },
+        {
+          "id": "skr_gluecksstraehne_dauer",
+          "name": "Glückssträhne-Dauer",
+          "beschreibung": "+2s",
+          "beschreibung_template": "+{dauer}s",
+          "beschreibung_werte": {"dauer": 2},
+          "max_stufen": 2,
+          "benoetigt": ["skr_fortune_schwelle"],
+          "schaltet_skill_frei": "glueckssträhne",
+          "position": {"reihe": 2, "spalte": 0}
+        },
+        {
+          "id": "skr_schattenwangenklinge_node",
+          "name": "Schattenwangenklinge-Node",
+          "beschreibung": "Schaltet Schattenwangenklinge frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Schattenwangenklinge"},
+          "max_stufen": 2,
+          "benoetigt": ["skr_raecher_kraft"],
+          "schaltet_skill_frei": "schattenwangenklinge",
+          "position": {"reihe": 2, "spalte": 2}
+        },
+        {
+          "id": "skr_schicksalsfaden_node",
+          "name": "Schicksalsfaden-Node",
+          "beschreibung": "Schaltet Schicksalsfaden frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Schicksalsfaden"},
+          "max_stufen": 2,
+          "benoetigt": ["skr_gluecksstraehne_dauer"],
+          "schaltet_skill_frei": "schicksalsfaden",
+          "position": {"reihe": 3, "spalte": 0}
+        },
+        {
+          "id": "skr_unvermeidlich_node",
+          "name": "Unvermeidlich-Node",
+          "beschreibung": "Schaltet Unvermeidlich frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Unvermeidlich"},
+          "max_stufen": 2,
+          "benoetigt": ["skr_schattenwangenklinge_node"],
+          "schaltet_skill_frei": "unvermeidlich",
+          "position": {"reihe": 3, "spalte": 2}
+        }
+      ],
+      "skills": [
+        {
+          "id": "gluckschlag",
+          "name": "Glücksschlag",
+          "typ": "aktiv",
+          "cooldown": 5.0,
+          "mana_kosten": 25,
+          "beschreibung": "Angriff der bei Krit 2 Fortune-Stapel gibt statt 1.",
+          "beschreibung_template": "Krit gibt +{fortune} Fortune statt 1",
+          "beschreibung_werte": {"fortune": 2},
+          "mechanik": "krit_fortune_boost",
+          "fortune_bei_krit": 2,
+          "skalierung": {"basis": 1.0, "pro_level": 0.04}
+        },
+        {
+          "id": "schicksalsdrehung",
+          "name": "Schicksalsdrehung",
+          "typ": "aktiv",
+          "cooldown": 10.0,
+          "mana_kosten": 30,
+          "beschreibung": "Verbraucht 5 Fortune-Stapel, nächster Angriff garantiert Krit.",
+          "beschreibung_template": "Verbraucht {stapel} Fortune, garantiert Krit",
+          "beschreibung_werte": {"stapel": 5},
+          "mechanik": "garantierter_krit",
+          "fortune_kosten": 5,
+          "skalierung": {"basis": 1.0, "pro_level": 0}
+        },
+        {
+          "id": "doppelschlag",
+          "name": "Doppelschlag",
+          "typ": "aktiv",
+          "cooldown": 8.0,
+          "mana_kosten": 35,
+          "beschreibung": "Zwei schnelle Angriffe, jeder Krit gibt Fortune. Höhere Krit-Chance bei mehr Fortune.",
+          "beschreibung_template": "2 Angriffe, jeder Krit gibt Fortune",
+          "beschreibung_werte": {},
+          "mechanik": "doppelschlag",
+          "skalierung": {"basis": 0.8, "pro_level": 0.03}
+        },
+        {
+          "id": "raecher",
+          "name": "Rächer",
+          "typ": "aktiv",
+          "cooldown": 15.0,
+          "mana_kosten": 45,
+          "beschreibung": "Verbraucht alle Fortune-Stapel, Schaden = 20% pro verbrauchtem Stapel.",
+          "beschreibung_template": "Verbraucht alle, Schaden = {schaden}% pro Stapel",
+          "beschreibung_werte": {"schaden": 20},
+          "mechanik": "fortune_angriff",
+          "schaden_pro_stapel": 0.20,
+          "skalierung": {"basis": 0.20, "pro_level": 0.01}
+        },
+        {
+          "id": "gluecksstraehne",
+          "name": "Glückssträhne",
+          "typ": "aktiv",
+          "cooldown": 20.0,
+          "mana_kosten": 40,
+          "beschreibung": "Verbraucht 3 Fortune-Stapel, nächste 8s können Angriffe nicht ausgewichen werden.",
+          "mechanik": "gluecksstraehne",
+          "fortune_kosten": 3,
+          "dauer": 8.0,
+          "skalierung": {"basis": 8.0, "pro_level": 0}
+        },
+        {
+          "id": "scharfes_auge",
+          "name": "Scharfes Auge",
+          "typ": "passiv",
+          "mana_reserviert": 10,
+          "beschreibung": "Bei 5+ Fortune-Stapeln erhöht sich Krit-Chance um 10%.",
+          "mechanik": "fortune_krit_bonus",
+          "fortune_schwelle": 5,
+          "krit_bonus": 0.10,
+          "skalierung": {"basis": 0.10, "pro_level": 0.005}
+        },
+        {
+          "id": "glueckstreffer",
+          "name": "Glückstreffer",
+          "typ": "passiv",
+          "mana_reserviert": 15,
+          "beschreibung": "Krits bei 8+ Fortune-Stapeln machen zusätzlichen Schaden.",
+          "mechanik": "glueckstreffer_schaden",
+          "fortune_schwelle": 8,
+          "skalierung": {"basis": 0.15, "pro_level": 0.01}
+        },
+        {
+          "id": "schicksalsgunst",
+          "name": "Schicksalsgunst",
+          "typ": "passiv",
+          "mana_reserviert": 20,
+          "beschreibung": "Ausweichen bei 5+ Fortune gibt +3 Stapel statt +2.",
+          "mechanik": "ausweichen_fortune_boost",
+          "fortune_schwelle": 5,
+          "neue_fortune": 3,
+          "skalierung": {"basis": 3, "pro_level": 0}
+        }
+      ]
+    }
+  },
+  "spezialisierungen": {
+    "gluecksbringer": {
+      "id": "gluecksbringer",
+      "name": "Glücksbringer",
+      "basis_klasse": "schicksalsritter",
+      "beschreibung": "Fortune maximieren, Krit-Burst.",
+      "neue_mechanik": {
+        "name": "Schicksalsschlag",
+        "beschreibung": "Wenn Fortune bei 10 und garantierter Krit ausgelöst wird bekommt der nächste Skill automatisch auch garantierten Krit.",
+        "kette": true
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "glb_schicksalsschlag_kette",
+            "name": "Schicksalsschlag-Kette",
+            "beschreibung": "+1 garantierter Krit nach Reset",
+            "max_stufen": 2,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "glb_gluecksregen_stapel",
+            "name": "Glücksregen-Stapel",
+            "beschreibung": "+1 Fortune zusätzlich",
+            "max_stufen": 2,
+            "benoetigt": ["glb_schicksalsschlag_kette"],
+            "schaltet_skill_frei": "gluecksregen",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "glb_goldener_moment_dauer",
+            "name": "Goldener-Moment-Dauer",
+            "beschreibung": "+1s",
+            "max_stufen": 2,
+            "benoetigt": ["glb_schicksalsschlag_kette"],
+            "schaltet_skill_frei": "goldener_moment",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "glb_fortunas_klinge_skalierung",
+            "name": "Fortunas-Klinge-Skalierung",
+            "beschreibung": "+2% pro Stapel",
+            "max_stufen": 2,
+            "benoetigt": ["glb_gluecksregen_stapel"],
+            "schaltet_skill_frei": "fortunas_klinge",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "glb_fortune_aufbau",
+            "name": "Fortune-Aufbau",
+            "beschreibung": "Krits geben +1 Fortune zusätzlich",
+            "max_stufen": 3,
+            "benoetigt": ["glb_goldener_moment_dauer"],
+            "schaltet_skill_frei": "schicksalsspirale",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "glb_gluecksmagnet_node",
+            "name": "Glücksmagnet-Node",
+            "beschreibung": "Schaltet Glücksmagnet frei",
+            "max_stufen": 2,
+            "benoetigt": ["glb_fortunas_klinge_skalierung"],
+            "schaltet_skill_frei": "gluecksmagnet",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "glb_ewiges_glueck_node",
+            "name": "Ewiges-Glück-Node",
+            "beschreibung": "Schaltet Ewiges Glück frei",
+            "max_stufen": 2,
+            "benoetigt": ["glb_fortune_aufbau"],
+            "schaltet_skill_frei": "ewiges_glueck",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "gluecksregen",
+            "name": "Glücksregen",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Gibt sofort +3 Fortune-Stapel.",
+            "mechanik": "fortune_geben",
+            "fortune": 3,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "schicksalsspirale",
+            "name": "Schicksalsspirale",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 40,
+            "beschreibung": "120% Schaden, bei Krit gibt es +3 Fortune statt +1.",
+            "mechanik": "krit_fortune_boost",
+            "fortune_bei_krit": 3,
+            "skalierung": {"basis": 1.2, "pro_level": 0.04}
+          },
+          {
+            "id": "goldener_moment",
+            "name": "Goldener Moment",
+            "typ": "aktiv",
+            "cooldown": 25.0,
+            "mana_kosten": 50,
+            "beschreibung": "Verbraucht 8 Fortune, nächste 5s jeder Angriff garantiert Krit.",
+            "mechanik": "garantierte_krit_phase",
+            "fortune_kosten": 8,
+            "dauer": 5.0,
+            "skalierung": {"basis": 5.0, "pro_level": 0}
+          },
+          {
+            "id": "fortunas_klinge",
+            "name": "Fortunas Klinge",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 45,
+            "beschreibung": "Schaden skaliert direkt mit Fortune-Stapeln × 15%.",
+            "mechanik": "fortune_skalierung",
+            "pro_stapel": 0.15,
+            "skalierung": {"basis": 0.15, "pro_level": 0.01}
+          },
+          {
+            "id": "gluecksmagnet",
+            "name": "Glücksmagnet",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Ausweichen gibt +3 Fortune statt +2.",
+            "mechanik": "ausweichen_fortune_boost",
+            "neue_fortune": 3,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "ewiges_glueck",
+            "name": "Ewiges Glück",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Nach Fortune-Reset bleiben 7 statt 5 Stapel.",
+            "mechanik": "fortune_reset_erhoehung",
+            "reset_wert": 7,
+            "skalierung": {"basis": 7, "pro_level": 0}
+          }
+        ]
+      }
+    },
+    "schicksalsweber": {
+      "id": "schicksalsweber",
+      "name": "Schicksalsweber",
+      "basis_klasse": "schicksalsritter",
+      "beschreibung": "Fortune kontrollieren, Zufall eliminieren.",
+      "neue_mechanik": {
+        "name": "Schicksalskontrolle",
+        "beschreibung": "Spieler kann Fortune-Stapel sperren — gesperrte Stapel werden nicht beim Reset verbraucht und können manuell freigegeben werden.",
+        "sperren moeglich": true
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "sw_schicksalsbruch_schaden",
+            "name": "Schicksalsbruch-Schaden",
+            "beschreibung": "+2% pro Stapel",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "sw_vorhersage_schaden",
+            "name": "Vorhersage-Schaden",
+            "beschreibung": "+10%",
+            "max_stufen": 2,
+            "benoetigt": ["sw_schicksalsbruch_schaden"],
+            "schaltet_skill_frei": "vorhersage",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "sw_zeitlinie_cooldown_reset",
+            "name": "Zeitlinie-Cooldown-Reset",
+            "beschreibung": "+5% Cooldown-Reduktion",
+            "max_stufen": 2,
+            "benoetigt": ["sw_schicksalsbruch_schaden"],
+            "schaltet_skill_frei": "stapel_sperren",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "sw_stapel_sperren_bonus",
+            "name": "Stapel-Sperren-Bonus",
+            "beschreibung": "Gesperrte Stapel geben +1% Schaden passiv",
+            "max_stufen": 2,
+            "benoetigt": ["sw_vorhersage_schaden"],
+            "schaltet_skill_frei": "schicksalsbruch",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "sw_zeitlinie_fortune_kosten",
+            "name": "Zeitlinie-Fortune-Kosten",
+            "beschreibung": "-1 Fortune",
+            "max_stufen": 2,
+            "benoetigt": ["sw_zeitlinie_cooldown_reset"],
+            "schaltet_skill_frei": "zeitlinie_verschieben",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "sw_schicksalskenner_node",
+            "name": "Schicksalskenner-Node",
+            "beschreibung": "Schaltet Schicksalskenner frei",
+            "max_stufen": 2,
+            "benoetigt": ["sw_stapel_sperren_bonus"],
+            "schaltet_skill_frei": "schicksalskenner",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "sw_kontrolleur_node",
+            "name": "Kontrolleur-Node",
+            "beschreibung": "Schaltet Kontrolleur frei",
+            "max_stufen": 2,
+            "benoetigt": ["sw_zeitlinie_fortune_kosten"],
+            "schaltet_skill_frei": "kontrolleur",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "stapel_sperren",
+            "name": "Stapel sperren",
+            "typ": "aktiv",
+            "cooldown": 5.0,
+            "mana_kosten": 20,
+            "beschreibung": "Sperrt aktuelle Fortune-Stapel.",
+            "mechanik": "fortune_sperren",
+            "skalierung": {"basis": 1, "pro_level": 0}
+          },
+          {
+            "id": "schicksalsbruch",
+            "name": "Schicksalsbruch",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 45,
+            "beschreibung": "Gibt alle gesperrten Stapel frei, jeder macht 10% Schaden.",
+            "mechanik": "sperre_freigeben",
+            "schaden_pro_stapel": 0.10,
+            "skalierung": {"basis": 0.10, "pro_level": 0.005}
+          },
+          {
+            "id": "vorhersage",
+            "name": "Vorhersage",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Verbraucht 5 Fortune, nächster Angriff 200% Schaden, kein Krit aber trifft immer.",
+            "mechanik": "vorhersage_skill",
+            "fortune_kosten": 5,
+            "skalierung": {"basis": 2.0, "pro_level": 0.05}
+          },
+          {
+            "id": "zeitlinie_verschieben",
+            "name": "Zeitlinie verschieben",
+            "typ": "aktiv",
+            "cooldown": 30.0,
+            "mana_kosten": 60,
+            "beschreibung": "Verbraucht alle Fortune, setzt alle Skill-Cooldowns um 50% zurück.",
+            "mechanik": "cooldown_reset",
+            "fortune_verbrauch": "alle",
+            "reset_prozent": 0.50,
+            "skalierung": {"basis": 0.50, "pro_level": 0.02}
+          },
+          {
+            "id": "schicksalskenner",
+            "name": "Schicksalskenner",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Gesperrte Stapel verfallen nie.",
+            "mechanik": "sperre_kein_verfall",
+            "skalierung": {"basis": 1, "pro_level": 0}
+          },
+          {
+            "id": "kontrolleur",
+            "name": "Kontrolleur",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Schicksalsbruch-Schaden +5% pro freigegebenem Stapel.",
+            "mechanik": "kontrolleur_bonus",
+            "bonus_pro_stapel": 0.05,
+            "skalierung": {"basis": 0.05, "pro_level": 0.003}
+          }
+        ]
+      }
+    },
+    "raecher": {
+      "id": "raecher",
+      "name": "Rächer",
+      "basis_klasse": "schicksalsritter",
+      "beschreibung": "Ausweichen als Kern, Fortune durch Konter.",
+      "neue_mechanik": {
+        "name": "Vergeltungsschlag",
+        "beschreibung": "Nach jedem Ausweichen hat der nächste Angriff innerhalb 2s automatisch +50% Schaden und gibt +3 Fortune statt +2.",
+        "fenster": 2.0,
+        "schaden_bonus": 0.50,
+        "fortune": 3
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "rae_vergeltungsschlag_schaden",
+            "name": "Vergeltungsschlag-Schaden",
+            "beschreibung": "+5%",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "rae_schattenausweichen_fortune",
+            "name": "Schattenausweichen-Fortune",
+            "beschreibung": "+1 Fortune bei Ausweichen",
+            "max_stufen": 2,
+            "benoetigt": ["rae_vergeltungsschlag_schaden"],
+            "schaltet_skill_frei": "schattenausweichen",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "rae_vergeltungsstoss_schaden",
+            "name": "Vergeltungsstoß-Schaden",
+            "beschreibung": "+10%",
+            "max_stufen": 2,
+            "benoetigt": ["rae_vergeltungsschlag_schaden"],
+            "schaltet_skill_frei": "vergeltungsstoss",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "rae_geisterform_dauer",
+            "name": "Geisterform-Dauer",
+            "beschreibung": "+0.5s",
+            "max_stufen": 2,
+            "benoetigt": ["rae_schattenausweichen_fortune"],
+            "schaltet_skill_frei": "geisterform",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "rae_fortunas_rache_skalierung",
+            "name": "Fortunas-Rache-Skalierung",
+            "beschreibung": "+3% pro Ausweicher",
+            "max_stufen": 2,
+            "benoetigt": ["rae_vergeltungsstoss_schaden"],
+            "schaltet_skill_frei": "fortunas_rache",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "rae_spiegelreflexe_node",
+            "name": "Spiegelreflexe-Node",
+            "beschreibung": "Schaltet Spiegelreflexe frei",
+            "max_stufen": 2,
+            "benoetigt": ["rae_geisterform_dauer"],
+            "schaltet_skill_frei": "spiegelreflexe",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "rae_geisterhafte_praesenz_node",
+            "name": "Geisterhafte-Präsenz-Node",
+            "beschreibung": "Schaltet Geisterhafte Präsenz frei",
+            "max_stufen": 2,
+            "benoetigt": ["rae_fortunas_rache_skalierung"],
+            "schaltet_skill_frei": "geisterhafte_praesenz",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "schattenausweichen",
+            "name": "Schattenausweichen",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 35,
+            "beschreibung": "Ausweichen +30% für 4s, nächstes Ausweichen gibt +4 Fortune.",
+            "mechanik": "ausweichen_boost",
+            "ausweichen_bonus": 0.30,
+            "fortune_bei_ausweichen": 4,
+            "dauer": 4.0,
+            "skalierung": {"basis": 0.30, "pro_level": 0.02}
+          },
+          {
+            "id": "vergeltungsstoss",
+            "name": "Vergeltungsstoß",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 40,
+            "beschreibung": "Nur nach Ausweichen nutzbar, 160% Schaden + Fortune-Bonus.",
+            "mechanik": "vergeltungsangriff",
+            "skalierung": {"basis": 1.6, "pro_level": 0.05}
+          },
+          {
+            "id": "geisterform",
+            "name": "Geisterform",
+            "typ": "aktiv",
+            "cooldown": 25.0,
+            "mana_kosten": 50,
+            "beschreibung": "3s lang kein Angriff trifft, danach Vergeltungsschlag auf alle verpassten Treffer.",
+            "mechanik": "geisterform_skill",
+            "dauer": 3.0,
+            "skalierung": {"basis": 3.0, "pro_level": 0}
+          },
+          {
+            "id": "fortunas_rache",
+            "name": "Fortunas Rache",
+            "typ": "aktiv",
+            "cooldown": 20.0,
+            "mana_kosten": 55,
+            "beschreibung": "Verbraucht alle Fortune, Schaden × Anzahl Ausweicher in diesem Kampf.",
+            "mechanik": "ausweicher_skalierung",
+            "schaden_pro_ausweicher": 0.03,
+            "skalierung": {"basis": 0.03, "pro_level": 0.002}
+          },
+          {
+            "id": "spiegelreflexe",
+            "name": "Spiegelreflexe",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Vergeltungsschlag-Fenster dauert 3s statt 2s.",
+            "mechanik": "vergeltungsfenster_verlaengern",
+            "neue_dauer": 3.0,
+            "skalierung": {"basis": 3.0, "pro_level": 0}
+          },
+          {
+            "id": "geisterhafte_praesenz",
+            "name": "Geisterhafte Präsenz",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Bei 5+ Fortune +10% Ausweichen-Chance.",
+            "mechanik": "fortune_ausweichen",
+            "fortune_schwelle": 5,
+            "ausweichen_bonus": 0.10,
+            "skalierung": {"basis": 0.10, "pro_level": 0.005}
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,656 @@
+{
+  "basis": {
+    "id": "herold",
+    "name": "Herold",
+    "grundwert": "charisma",
+    "beschreibung": "Buffs und Debuffs durch Einfluss-Stapel kontrollieren.",
+    "kern_mechanik": {
+      "name": "Einfluss-Stapel",
+      "start": 0,
+      "maximum": 8,
+      "aufbau": {
+        "debuff": 1,
+        "buff": 1
+      },
+      "verfall": true,
+      "verfall_bei": "buff_debuff_ende",
+      "effekt": "Bei 8 Stapeln: Dominanz — alle Buffs/Debuffs +50% stärker für 6s, Reset auf 4",
+      "dominanz": {
+        "dauer": 6,
+        "verstaerkung": 0.50,
+        "reset_auf": 4
+      }
+    },
+    "skill_baum": {
+"nodes": [
+        {
+          "id": "her_einfluss_aufbau",
+          "name": "Einfluss-Aufbau",
+          "beschreibung": "Neue Buffs/Debuffs geben +0.5 Einfluss zusätzlich",
+          "beschreibung_template": "Neue Buffs/Debuffs +{bonus} Einfluss",
+          "beschreibung_werte": {"bonus": 0.5},
+          "max_stufen": 3,
+          "benoetigt": [],
+          "schaltet_skill_frei": null,
+          "position": {"reihe": 0, "spalte": 1}
+        },
+        {
+          "id": "her_einfluss_max",
+          "name": "Einfluss-Max",
+          "beschreibung": "+1 maximaler Stapel",
+          "beschreibung_template": "+{bonus} maximaler Stapel",
+          "beschreibung_werte": {"bonus": 1},
+          "max_stufen": 2,
+          "benoetigt": ["her_einfluss_aufbau"],
+          "schaltet_skill_frei": "schlachtruf",
+          "position": {"reihe": 1, "spalte": 0}
+        },
+        {
+          "id": "her_dominanz_dauer",
+          "name": "Dominanz-Dauer",
+          "beschreibung": "+1s Dominanz-Effekt",
+          "beschreibung_template": "+{dauer}s Dominanz-Effekt",
+          "beschreibung_werte": {"dauer": 1},
+          "max_stufen": 2,
+          "benoetigt": ["her_einfluss_aufbau"],
+          "schaltet_skill_frei": "einschuechtern",
+          "position": {"reihe": 1, "spalte": 2}
+        },
+        {
+          "id": "her_verderbnis_kosten",
+          "name": "Verderbnis-Kosten",
+          "beschreibung": "Kostet 3 statt 4 Stapel",
+          "beschreibung_template": "Kostet {kosten} statt 4 Stapel",
+          "beschreibung_werte": {"kosten": 3},
+          "max_stufen": 2,
+          "benoetigt": ["her_einfluss_max"],
+          "schaltet_skill_frei": "verderbnis",
+          "position": {"reihe": 2, "spalte": 0}
+        },
+        {
+          "id": "her_ruhm_des_kampfes_node",
+          "name": "Ruhm-des-Kampfes-Node",
+          "beschreibung": "Schaltet Ruhm des Kampfes frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Ruhm des Kampfes"},
+          "max_stufen": 2,
+          "benoetigt": ["her_verderbnis_kosten"],
+          "schaltet_skill_frei": "ruhm_des_kampfes",
+          "position": {"reihe": 3, "spalte": 0}
+        },
+        {
+          "id": "her_kampfgeist_node",
+          "name": "Kampfgeist-Node",
+          "beschreibung": "Schaltet Kampfgeist frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Kampfgeist"},
+          "max_stufen": 2,
+          "benoetigt": ["her_dominanz_dauer"],
+          "schaltet_skill_frei": "kampfgeist",
+          "position": {"reihe": 3, "spalte": 2}
+        }
+      ],
+      "skills": [
+        {
+          "id": "schlachtruf",
+          "name": "Schlachtruf",
+          "typ": "aktiv",
+          "cooldown": 12.0,
+          "mana_kosten": 35,
+          "beschreibung": "Buff: eigener Schaden +20% für 8s, gibt +1 Einfluss.",
+          "beschreibung_template": "Eigener Schaden +{wert}% für {dauer}s, +{einfluss} Einfluss",
+          "beschreibung_werte": {"wert": 20, "dauer": 8, "einfluss": 1},
+          "mechanik": "buff_skill",
+          "buff": "schaden",
+          "wert": 0.20,
+          "dauer": 8.0,
+          "einfluss": 1,
+          "skalierung": {"basis": 0.20, "pro_level": 0.01}
+        },
+        {
+          "id": "einschuechtern",
+          "name": "Einschüchtern",
+          "typ": "aktiv",
+          "cooldown": 12.0,
+          "mana_kosten": 35,
+          "beschreibung": "Debuff: Gegner Schaden -20% für 8s, gibt +1 Einfluss.",
+          "mechanik": "debuff_skill",
+          "debuff": "schaden",
+          "wert": -0.20,
+          "dauer": 8.0,
+          "einfluss": 1,
+          "skalierung": {"basis": 0.20, "pro_level": 0.01}
+        },
+        {
+          "id": "inspiration",
+          "name": "Inspiration",
+          "typ": "aktiv",
+          "cooldown": 15.0,
+          "mana_kosten": 40,
+          "beschreibung": "Buff: Mana-Regen +150% für 6s, gibt +1 Einfluss.",
+          "mechanik": "buff_skill",
+          "buff": "mana_regen",
+          "wert": 1.50,
+          "dauer": 6.0,
+          "einfluss": 1,
+          "skalierung": {"basis": 1.50, "pro_level": 0.05}
+        },
+        {
+          "id": "demütigung",
+          "name": "Demütigung",
+          "typ": "aktiv",
+          "cooldown": 12.0,
+          "mana_kosten": 35,
+          "beschreibung": "Debuff: Gegner Atk-Speed -30% für 8s, gibt +1 Einfluss.",
+          "mechanik": "debuff_skill",
+          "debuff": "atk_speed",
+          "wert": -0.30,
+          "dauer": 8.0,
+          "einfluss": 1,
+          "skalierung": {"basis": 0.30, "pro_level": 0.01}
+        },
+        {
+          "id": "verderbnis",
+          "name": "Verderbnis",
+          "typ": "aktiv",
+          "cooldown": 20.0,
+          "mana_kosten": 50,
+          "beschreibung": "Verbraucht 4 Einfluss-Stapel, entfernt alle Buffs vom Gegner, 100% mag. Schaden pro entferntem Buff.",
+          "mechanik": "buff_entfernen_schaden",
+          "einfluss_kosten": 4,
+          "skalierung": {"basis": 1.0, "pro_level": 0.05}
+        },
+        {
+          "id": "dunkle_ausstrahlung",
+          "name": "Dunkle Ausstrahlung",
+          "typ": "passiv",
+          "mana_reserviert": 10,
+          "beschreibung": "Bei 4+ Einfluss verlieren Gegner-Debuffs 2s später.",
+          "mechanik": "debuff_verlaengerung",
+          "einfluss_schwelle": 4,
+          "verlaengerung": 2.0,
+          "skalierung": {"basis": 2.0, "pro_level": 0}
+        },
+        {
+          "id": "angstfluch",
+          "name": "Angstfluch",
+          "typ": "passiv",
+          "mana_reserviert": 15,
+          "beschreibung": "Bei 6+ Einfluss geben eigene Debuffs +1 Einfluss beim Auslösen.",
+          "mechanik": "debuff_einfluss_boost",
+          "einfluss_schwelle": 6,
+          "bonus_einfluss": 1,
+          "skalierung": {"basis": 1, "pro_level": 0}
+        },
+        {
+          "id": "schattenpakt",
+          "name": "Schattenpakt",
+          "typ": "passiv",
+          "mana_reserviert": 20,
+          "beschreibung": "Dominanz-Aktivierung gibt sofort +30% Schaden für den ersten Angriff danach.",
+          "mechanik": "dominanz_schaden",
+          "schaden_bonus": 0.30,
+          "skalierung": {"basis": 0.30, "pro_level": 0.02}
+        }
+      ]
+    }
+  },
+  "spezialisierungen": {
+    "kriegsherr": {
+      "id": "kriegsherr",
+      "name": "Kriegsherr",
+      "basis_klasse": "herold",
+      "beschreibung": "Starke Selbst-Buffs, Einfluss durch eigene Stärke.",
+      "neue_mechanik": {
+        "name": "Kriegsruf",
+        "beschreibung": "Bei Dominanz-Aktivierung macht der nächste Angriff +15% Schaden pro aktivem Buff.",
+        "schaden_pro_buff": 0.15
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "kh_kriegsruf_schaden",
+            "name": "Kriegsruf-Schaden",
+            "beschreibung": "+3% pro Buff",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "kh_berserkerruf_dauer",
+            "name": "Berserkerruf-Dauer",
+            "beschreibung": "+2s",
+            "max_stufen": 2,
+            "benoetigt": ["kh_kriegsruf_schaden"],
+            "schaltet_skill_frei": "berserkerruf",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "kh_stahlwille_ruestung",
+            "name": "Stahlwille-Rüstung",
+            "beschreibung": "+5%",
+            "max_stufen": 2,
+            "benoetigt": ["kh_kriegsruf_schaden"],
+            "schaltet_skill_frei": "stahlwille",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "kh_kampfrausch_atk_speed",
+            "name": "Kampfrausch-Atk-Speed",
+            "beschreibung": "+5%",
+            "max_stufen": 2,
+            "benoetigt": ["kh_berserkerruf_dauer"],
+            "schaltet_skill_frei": "kampfrausch",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "kh_kriegsruf_entladung_skalierung",
+            "name": "Kriegsruf-Entladung-Skalierung",
+            "beschreibung": "+3% pro Stapel",
+            "max_stufen": 2,
+            "benoetigt": ["kh_stahlwille_ruestung"],
+            "schaltet_skill_frei": "kriegsruf_entladung",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "kh_ungebrochener_wille_node",
+            "name": "Ungebrochener-Wille-Node",
+            "beschreibung": "Schaltet Ungebrochener Wille frei",
+            "max_stufen": 2,
+            "benoetigt": ["kh_kampfrausch_atk_speed"],
+            "schaltet_skill_frei": "ungebrochener_wille",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "kh_kriegserfahrung_node",
+            "name": "Kriegserfahrung-Node",
+            "beschreibung": "Schaltet Kriegserfahrung frei",
+            "max_stufen": 2,
+            "benoetigt": ["kh_kriegsruf_entladung_skalierung"],
+            "schaltet_skill_frei": "kriegserfahrung",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "berserkerruf",
+            "name": "Berserkerruf",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 40,
+            "beschreibung": "Buff: eigener Schaden +30% für 10s, gibt +2 Einfluss.",
+            "mechanik": "buff_skill",
+            "buff": "schaden",
+            "wert": 0.30,
+            "dauer": 10.0,
+            "einfluss": 2,
+            "skalierung": {"basis": 0.30, "pro_level": 0.02}
+          },
+          {
+            "id": "stahlwille",
+            "name": "Stahlwille",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Buff: eigene Rüstung +25% für 8s, gibt +1 Einfluss.",
+            "mechanik": "buff_skill",
+            "buff": "ruestung",
+            "wert": 0.25,
+            "dauer": 8.0,
+            "einfluss": 1,
+            "skalierung": {"basis": 0.25, "pro_level": 0.01}
+          },
+          {
+            "id": "kampfrausch",
+            "name": "Kampfrausch",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 30,
+            "beschreibung": "Buff: Atk-Speed +20% für 6s, gibt +1 Einfluss.",
+            "mechanik": "buff_skill",
+            "buff": "atk_speed",
+            "wert": 0.20,
+            "dauer": 6.0,
+            "einfluss": 1,
+            "skalierung": {"basis": 0.20, "pro_level": 0.01}
+          },
+          {
+            "id": "kriegsruf_entladung",
+            "name": "Kriegsruf-Entladung",
+            "typ": "aktiv",
+            "cooldown": 20.0,
+            "mana_kosten": 55,
+            "beschreibung": "Verbraucht alle Einfluss-Stapel, Schaden = Stapel × 20% + Buff-Bonus.",
+            "mechanik": "einfluss_angriff_mit_buff",
+            "schaden_pro_stapel": 0.20,
+            "buff_bonus_pro_stapel": 0.03,
+            "skalierung": {"basis": 0.20, "pro_level": 0.01}
+          },
+          {
+            "id": "ungebrochener_wille",
+            "name": "Ungebrochener Wille",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Jeder aktive Buff verlängert sich um 1s wenn Dominanz aktiviert.",
+            "mechanik": "dominanz_buff_verlaengerung",
+            "verlaengerung": 1.0,
+            "skalierung": {"basis": 1.0, "pro_level": 0}
+          },
+          {
+            "id": "kriegserfahrung",
+            "name": "Kriegserfahrung",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Buffs geben +0.5 Einfluss zusätzlich beim Auslösen.",
+            "mechanik": "buff_einfluss_boost",
+            "bonus_einfluss": 0.5,
+            "skalierung": {"basis": 0.5, "pro_level": 0}
+          }
+        ]
+      }
+    },
+    "hexer": {
+      "id": "hexer",
+      "name": "Hexer",
+      "basis_klasse": "herold",
+      "beschreibung": "Starke Debuffs, Einfluss durch Gegner-Schwächung.",
+      "neue_mechanik": {
+        "name": "Fluchverkettung",
+        "beschreibung": "Wenn 3+ verschiedene Debuffs gleichzeitig aktiv sind verstärken sie sich gegenseitig um 20%. Jeder weitere Debuff erhöht diesen Bonus um 10%.",
+        "basis_bonus": 0.20,
+        "bonus_pro_zusatzlich": 0.10
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "hex_fluchverkettung_basis",
+            "name": "Fluchverkettung-Basis",
+            "beschreibung": "+5% Verstärkung",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "hex_verdammungsfluch_dauer",
+            "name": "Verdammungsfluch-Dauer",
+            "beschreibung": "+2s",
+            "max_stufen": 2,
+            "benoetigt": ["hex_fluchverkettung_basis"],
+            "schaltet_skill_frei": "verdammungsfluch",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "hex_schwaechefluch_staerke",
+            "name": "Schwächefluch-Stärke",
+            "beschreibung": "+5% Rüstungsreduktion",
+            "max_stufen": 2,
+            "benoetigt": ["hex_fluchverkettung_basis"],
+            "schaltet_skill_frei": "schwaechefluch",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "hex_laehmungsfluch_staerke",
+            "name": "Lähmungsfluch-Stärke",
+            "beschreibung": "+5% Atk-Speed-Reduktion",
+            "max_stufen": 2,
+            "benoetigt": ["hex_verdammungsfluch_dauer"],
+            "schaltet_skill_frei": "laehmungsfluch",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "hex_fluchexplosion_skalierung",
+            "name": "Fluchexplosion-Skalierung",
+            "beschreibung": "+3% pro Stapel",
+            "max_stufen": 2,
+            "benoetigt": ["hex_schwaechefluch_staerke"],
+            "schaltet_skill_frei": "fluchexplosion",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "hex_meisterfluecher_node",
+            "name": "Meisterflücher-Node",
+            "beschreibung": "Schaltet Meisterflücher frei",
+            "max_stufen": 2,
+            "benoetigt": ["hex_laehmungsfluch_staerke"],
+            "schaltet_skill_frei": "meisterfluecher",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "hex_dunkle_resonanz_node",
+            "name": "Dunkle-Resonanz-Node",
+            "beschreibung": "Schaltet Dunkle Resonanz frei",
+            "max_stufen": 2,
+            "benoetigt": ["hex_fluchexplosion_skalierung"],
+            "schaltet_skill_frei": "dunkle_resonanz",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "verdammungsfluch",
+            "name": "Verdammungsfluch",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 40,
+            "beschreibung": "Debuff: Gegner Schaden -25% für 10s, gibt +2 Einfluss.",
+            "mechanik": "debuff_skill",
+            "debuff": "schaden",
+            "wert": -0.25,
+            "dauer": 10.0,
+            "einfluss": 2,
+            "skalierung": {"basis": 0.25, "pro_level": 0.01}
+          },
+          {
+            "id": "schwaechefluch",
+            "name": "Schwächefluch",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Debuff: Gegner Rüstung -30% für 8s, gibt +2 Einfluss.",
+            "mechanik": "debuff_skill",
+            "debuff": "ruestung",
+            "wert": -0.30,
+            "dauer": 8.0,
+            "einfluss": 2,
+            "skalierung": {"basis": 0.30, "pro_level": 0.01}
+          },
+          {
+            "id": "laehmungsfluch",
+            "name": "Lähmungsfluch",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Debuff: Gegner Atk-Speed -35% für 6s, gibt +2 Einfluss.",
+            "mechanik": "debuff_skill",
+            "debuff": "atk_speed",
+            "wert": -0.35,
+            "dauer": 6.0,
+            "einfluss": 2,
+            "skalierung": {"basis": 0.35, "pro_level": 0.02}
+          },
+          {
+            "id": "fluchexplosion",
+            "name": "Fluchexplosion",
+            "typ": "aktiv",
+            "cooldown": 20.0,
+            "mana_kosten": 55,
+            "beschreibung": "Verbraucht alle Einfluss-Stapel, Schaden = Stapel × 15% × aktive Debuffs.",
+            "mechanik": "fluchexplosion",
+            "schaden_pro_stapel": 0.15,
+            "skalierung": {"basis": 0.15, "pro_level": 0.01}
+          },
+          {
+            "id": "meisterfluecher",
+            "name": "Meisterflücher",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Fluchverkettungs-Bonus steigt auf 25% pro Debuff-Typ.",
+            "mechanik": "fluchverkettung_boost",
+            "bonus": 0.25,
+            "skalierung": {"basis": 0.25, "pro_level": 0.01}
+          },
+          {
+            "id": "dunkle_resonanz",
+            "name": "Dunkle Resonanz",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Debuffs verlängern sich um 1s wenn Dominanz aktiv ist.",
+            "mechanik": "dominanz_debuff_verlaengerung",
+            "verlaengerung": 1.0,
+            "skalierung": {"basis": 1.0, "pro_level": 0}
+          }
+        ]
+      }
+    },
+    "seelenbinder": {
+      "id": "seelenbinder",
+      "name": "Seelenbinder",
+      "basis_klasse": "herold",
+      "beschreibung": "Buffs und Debuffs kombinieren für Synergie.",
+      "neue_mechanik": {
+        "name": "Seelenband",
+        "beschreibung": "Pro aktivem Debuff auf Gegner verstärkt sich ein zufälliger eigener Buff um 15%. Pro eigenem Buff verliert Gegner 5% eines zufälligen Stats.",
+        "buff_verstaerkung": 0.15,
+        "gegner_stat_reduktion": 0.05
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "sl_seelenband_staerke",
+            "name": "Seelenband-Stärke",
+            "beschreibung": "+3% Verstärkung pro Debuff",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "sl_lebensband_intensitaet",
+            "name": "Lebensband-Intensität",
+            "beschreibung": "+1% HP/s für beide Effekte",
+            "max_stufen": 2,
+            "benoetigt": ["sl_seelenband_staerke"],
+            "schaltet_skill_frei": "lebensband",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "sl_krafttransfer_staerke",
+            "name": "Krafttransfer-Stärke",
+            "beschreibung": "+5% für beide Effekte",
+            "max_stufen": 2,
+            "benoetigt": ["sl_seelenband_staerke"],
+            "schaltet_skill_frei": "krafttransfer",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "sl_seelensog_einfluss",
+            "name": "Seelensog-Einfluss",
+            "beschreibung": "+1 Einfluss zusätzlich",
+            "max_stufen": 2,
+            "benoetigt": ["sl_lebensband_intensitaet"],
+            "schaltet_skill_frei": "seelensog",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "sl_gleichgewicht_bonus",
+            "name": "Gleichgewicht-Bonus",
+            "beschreibung": "+3% zu allen Effekten",
+            "max_stufen": 2,
+            "benoetigt": ["sl_krafttransfer_staerke"],
+            "schaltet_skill_frei": "seelenband_burst",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "sl_harmonische_seele_node",
+            "name": "Harmonische-Seele-Node",
+            "beschreibt": "Schaltet Harmonische Seele frei",
+            "max_stufen": 2,
+            "benoetigt": ["sl_seelensog_einfluss"],
+            "schaltet_skill_frei": "harmonische_seele",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "sl_gleichgewicht_node",
+            "name": "Gleichgewicht-Node",
+            "beschreibung": "Schaltet Gleichgewicht frei",
+            "max_stufen": 2,
+            "benoetigt": ["sl_gleichgewicht_bonus"],
+            "schaltet_skill_frei": "gleichgewicht",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "lebensband",
+            "name": "Lebensband",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 45,
+            "beschreibung": "Buff auf sich: heilt 3% HP/s für 8s. Debuff auf Gegner: verliert 3% HP/s für 8s. Beide gleichzeitig. Gibt +2 Einfluss.",
+            "mechanik": "seelenband_doppelt",
+            "buff": {"typ": "heilung", "wert": 0.03, "dauer": 8.0},
+            "debuff": {"typ": "hp_verlust", "wert": 0.03, "dauer": 8.0},
+            "einfluss": 2,
+            "skalierung": {"basis": 0.03, "pro_level": 0.002}
+          },
+          {
+            "id": "krafttransfer",
+            "name": "Krafttransfer",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 40,
+            "beschreibung": "Buff: eigene Atk-Speed +15% für 6s. Debuff: Gegner Atk-Speed -15% für 6s. Gibt +2 Einfluss.",
+            "mechanik": "seelenband_doppelt",
+            "buff": {"typ": "atk_speed", "wert": 0.15, "dauer": 6.0},
+            "debuff": {"typ": "atk_speed", "wert": -0.15, "dauer": 6.0},
+            "einfluss": 2,
+            "skalierung": {"basis": 0.15, "pro_level": 0.01}
+          },
+          {
+            "id": "seelensog",
+            "name": "Seelensog",
+            "typ": "aktiv",
+            "cooldown": 18.0,
+            "mana_kosten": 50,
+            "beschreibung": "Verbraucht 3 Einfluss, stiehlt einen aktiven Buff vom Gegner.",
+            "mechanik": "buff_stehlen",
+            "einfluss_kosten": 3,
+            "skalierung": {"basis": 1, "pro_level": 0}
+          },
+          {
+            "id": "seelenband_burst",
+            "name": "Seelenband-Burst",
+            "typ": "aktiv",
+            "cooldown": 25.0,
+            "mana_kosten": 60,
+            "beschreibung": "Bei Dominanz: alle Seelenband-Effekte feuern sofort einmal extra.",
+            "mechanik": "dominanz_burst",
+            "skalierung": {"basis": 1, "pro_level": 0}
+          },
+          {
+            "id": "harmonische_seele",
+            "name": "Harmonische Seele",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Seelenband-Verstärkung steigt auf 20% pro Debuff.",
+            "mechanik": "seelenband_boost",
+            "bonus": 0.20,
+            "skalierung": {"basis": 0.20, "pro_level": 0.01}
+          },
+          {
+            "id": "gleichgewicht",
+            "name": "Gleichgewicht",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Wenn gleich viele Buffs wie Debuffs aktiv sind +10% zu allen Einfluss-Effekten.",
+            "mechanik": "gleichgewicht_bonus",
+            "bonus": 0.10,
+            "skalierung": {"basis": 0.10, "pro_level": 0.005}
+          }
+        ]
+      }
+    }
+  }
+}

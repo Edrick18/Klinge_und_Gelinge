@@ -1,0 +1,644 @@
+{
+  "basis": {
+    "id": "schatten",
+    "name": "Schatten",
+    "grundwert": "beweglichkeit",
+    "beschreibung": "Meister der Combo-Punkte für tödliche Finisher.",
+    "kern_mechanik": {
+      "name": "Combo-Punkte",
+      "start": 0,
+      "maximum": 5,
+      "aufbau": {
+        "auto_attack": 1,
+        "skill": 2
+      },
+      "verfall": true,
+      "verfall_dauer": 6,
+      "effekt": "Finisher-Skills verbrauchen alle Combos, Schaden skaliert mit Anzahl"
+    },
+    "skill_baum": {
+"nodes": [
+        {
+          "id": "sch_combo_verfall",
+          "name": "Combo-Verfall",
+          "beschreibung": "Verfalls-Timer +2s",
+          "beschreibung_template": "Verfalls-Timer +{dauer}s",
+          "beschreibung_werte": {"dauer": 2},
+          "max_stufen": 3,
+          "benoetigt": [],
+          "schaltet_skill_frei": null,
+          "position": {"reihe": 0, "spalte": 1}
+        },
+        {
+          "id": "sch_combo_aufbau",
+          "name": "Combo-Aufbau",
+          "beschreibung": "Skill-Treffer geben +1 Combo zusätzlich",
+          "beschreibung_template": "Skill-Treffer +{bonus} Combo",
+          "beschreibung_werte": {"bonus": 1},
+          "max_stufen": 2,
+          "benoetigt": ["sch_combo_verfall"],
+          "schaltet_skill_frei": "klingentanz",
+          "position": {"reihe": 1, "spalte": 0}
+        },
+        {
+          "id": "sch_finisher_kraft",
+          "name": "Finisher-Kraft",
+          "beschreibung": "Finisher-Schaden pro Combo höher",
+          "beschreibung_template": "Finisher +{bonus}% Schaden/Combo",
+          "beschreibung_werte": {"bonus": 5},
+          "max_stufen": 3,
+          "benoetigt": ["sch_combo_verfall"],
+          "schaltet_skill_frei": "schattensprung",
+          "position": {"reihe": 1, "spalte": 2}
+        },
+        {
+          "id": "sch_schattensprung_combo",
+          "name": "Schattensprung-Combo",
+          "beschreibung": "+1 Combo pro Sprung",
+          "beschreibung_template": "+{bonus} Combo pro Sprung",
+          "beschreibung_werte": {"bonus": 1},
+          "max_stufen": 2,
+          "benoetigt": ["sch_combo_aufbau"],
+          "schaltet_skill_frei": "todesstoss",
+          "position": {"reihe": 2, "spalte": 0}
+        },
+        {
+          "id": "sch_arglist_node",
+          "name": "Arglist-Node",
+          "beschreibung": "Schaltet Arglist frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Arglist"},
+          "max_stufen": 2,
+          "benoetigt": ["sch_combo_aufbau"],
+          "schaltet_skill_frei": "arglist",
+          "position": {"reihe": 2, "spalte": 2}
+        },
+        {
+          "id": "sch_nadelstich_node",
+          "name": "Nadelstich-Node",
+          "beschreibung": "Schaltet Nadelstich frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Nadelstich"},
+          "max_stufen": 2,
+          "benoetigt": ["sch_finisher_kraft"],
+          "schaltet_skill_frei": "nadelstich",
+          "position": {"reihe": 3, "spalte": 0}
+        },
+        {
+          "id": "sch_schattenwandel_node",
+          "name": "Schattenwandel-Node",
+          "beschreibung": "Schaltet Schattenwandel frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Schattenwandel"},
+          "max_stufen": 2,
+          "benoetigt": ["sch_arglist_node"],
+          "schaltet_skill_frei": "schattenwandel",
+          "position": {"reihe": 3, "spalte": 2}
+        }
+      ],
+      "skills": [
+        {
+          "id": "klingentanz",
+          "name": "Klingentanz",
+          "typ": "aktiv",
+          "cooldown": 8.0,
+          "mana_kosten": 30,
+          "beschreibung": "Drei schnelle Treffer, jeder gibt +1 Combo.",
+          "beschreibung_template": "{treffer} Treffer, jeder +{combo} Combo",
+          "beschreibung_werte": {"treffer": 3, "combo": 1},
+          "mechanik": "mehrfach_angriff",
+          "treffer": 3,
+          "combo_pro_treffer": 1,
+          "skalierung": {"basis": 0.6, "pro_level": 0.02}
+        },
+        {
+          "id": "schattensprung",
+          "name": "Schattensprung",
+          "typ": "aktiv",
+          "cooldown": 6.0,
+          "mana_kosten": 25,
+          "beschreibung": "Teleport-Angriff, gibt +2 Combo, ignoriert Rüstung.",
+          "beschreibung_template": "Teleport, +{combo} Combo, ignoriert Rüstung",
+          "beschreibung_werte": {"combo": 2},
+          "mechanik": "teleport_angriff",
+          "combo": 2,
+          "ignoriert_ruestung": true,
+          "skalierung": {"basis": 1.2, "pro_level": 0.04}
+        },
+        {
+          "id": "toedlicher_stich",
+          "name": "Tödlicher Stich",
+          "typ": "aktiv",
+          "cooldown": 10.0,
+          "mana_kosten": 40,
+          "beschreibung": "Finisher: verbraucht alle Combos, Schaden pro Combo steigt.",
+          "mechanik": "finisher",
+          "skalierung": {"basis": 0.5, "pro_level": 0.05}
+        },
+        {
+          "id": "dunkelheit",
+          "name": "Dunkelheit",
+          "typ": "aktiv",
+          "cooldown": 15.0,
+          "mana_kosten": 35,
+          "beschreibung": "Verbraucht 3 Combos, senkt Gegner Trefferchance für 6s.",
+          "mechanik": "trefferchance_reduktion",
+          "combo_kosten": 3,
+          "reduktion": 0.30,
+          "dauer": 6.0,
+          "skalierung": {"basis": 0.30, "pro_level": 0.01}
+        },
+        {
+          "id": "abschluss",
+          "name": "Abschluss",
+          "typ": "aktiv",
+          "cooldown": 20.0,
+          "mana_kosten": 50,
+          "beschreibung": "Finisher: verbraucht alle Combos, nur unter 25% Gegner-HP, massiver Execute-Schaden.",
+          "mechanik": "execute_finisher",
+          "execute_schwelle": 0.25,
+          "skalierung": {"basis": 2.0, "pro_level": 0.1}
+        },
+        {
+          "id": "schattenschritt",
+          "name": "Schattenschritt",
+          "typ": "passiv",
+          "mana_reserviert": 10,
+          "beschreibung": "Bei 3+ Combos hat jeder Angriff 15% Chance sofort +1 Combo zu geben.",
+          "mechanik": "combo_chance",
+          "combo_schwelle": 3,
+          "chance": 0.15,
+          "skalierung": {"basis": 0.15, "pro_level": 0.01}
+        },
+        {
+          "id": "katzenpfoten",
+          "name": "Katzenpfoten",
+          "typ": "passiv",
+          "mana_reserviert": 15,
+          "beschreibung": "Ausweichen gibt +1 Combo.",
+          "mechanik": "ausweichen_combo",
+          "combo": 1,
+          "skalierung": {"basis": 1, "pro_level": 0}
+        },
+        {
+          "id": "praezision",
+          "name": "Präzision",
+          "typ": "passiv",
+          "mana_reserviert": 20,
+          "beschreibung": "Bei 4+ Combos können Angriffe nicht ausgewichen werden.",
+          "mechanik": "nicht_ausweichbar",
+          "combo_schwelle": 4,
+          "skalierung": {"basis": 1, "pro_level": 0}
+        }
+      ]
+    }
+  },
+  "spezialisierungen": {
+    "assassine": {
+      "id": "assassine",
+      "name": "Assassine",
+      "basis_klasse": "schatten",
+      "beschreibung": "Execute und Gift, Combo für tödliche Finisher.",
+      "neue_mechanik": {
+        "name": "Tödliche Konzentration",
+        "beschreibung": "Bei 5 Combos (Maximum) erhöht sich der Schaden des nächsten Finishers um +20% für jede Sekunde die Combos auf Maximum gehalten werden (bis +100%).",
+        "max_combo": 5,
+        "bonus_pro_sekunde": 0.20,
+        "maximum": 1.0
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "ass_konzentrations_bonus",
+            "name": "Konzentrations-Bonus",
+            "beschreibung": "+5% pro Sekunde auf Maximum",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "ass_giftklinge_dauer",
+            "name": "Giftklinge-Dauer",
+            "beschreibung": "+2s Gift",
+            "max_stufen": 2,
+            "benoetigt": ["ass_konzentrations_bonus"],
+            "schaltet_skill_frei": "giftklinge",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "ass_hinterhalt_krit_schaden",
+            "name": "Hinterhalt-Krit-Schaden",
+            "beschreibung": "+10%",
+            "max_stufen": 2,
+            "benoetigt": ["ass_konzentrations_bonus"],
+            "schaltet_skill_frei": "hinterhalt",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "ass_schleichgift_angriffe",
+            "name": "Schleichgift-Angriffe",
+            "beschreibung": "+1 Auto-Attack",
+            "max_stufen": 2,
+            "benoetigt": ["ass_giftklinge_dauer"],
+            "schaltet_skill_frei": "schleichgift",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "ass_konzentrations_maximum",
+            "name": "Konzentrations-Maximum",
+            "beschreibung": "Cap steigt auf +120%",
+            "max_stufen": 1,
+            "benoetigt": ["ass_hinterhalt_krit_schaden"],
+            "schaltet_skill_frei": "toedlicher_stich",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "ass_meuchelmoerder_node",
+            "name": "Meuchelmörder-Node",
+            "beschreibung": "Schaltet Meuchelmörder frei",
+            "max_stufen": 2,
+            "benoetigt": ["ass_schleichgift_angriffe"],
+            "schaltet_skill_frei": "meuchelmoerder",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "ass_giftmeister_node",
+            "name": "Giftmeister-Node",
+            "beschreibung": "Schaltet Giftmeister frei",
+            "max_stufen": 2,
+            "benoetigt": ["ass_konzentrations_maximum"],
+            "schaltet_skill_frei": "giftmeister",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "giftklinge",
+            "name": "Giftklinge",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 30,
+            "beschreibung": "100% Schaden, vergiftet Gegner 3% HP/2s für 10s, gibt +2 Combo.",
+            "mechanik": "gift_skill",
+            "combo": 2,
+            "gift_schaden": 0.03,
+            "dauer": 10.0,
+            "skalierung": {"basis": 1.0, "pro_level": 0.04}
+          },
+          {
+            "id": "hinterhalt",
+            "name": "Hinterhalt",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 40,
+            "beschreibung": "Verbraucht 4 Combos, nächster Angriff immer Krit mit +60% Krit-Schaden.",
+            "mechanik": "garantierter_krit",
+            "combo_kosten": 4,
+            "krit_bonus": 0.60,
+            "skalierung": {"basis": 1.0, "pro_level": 0}
+          },
+          {
+            "id": "toedlicher_stich",
+            "name": "Tödlicher Stich",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 45,
+            "beschreibung": "Finisher: Schaden + Konzentrations-Bonus + alle aktiven DoT-Schäden sofort als Burst.",
+            "mechanik": "finisher_mit_konzentration",
+            "dot_burst": true,
+            "skalierung": {"basis": 0.6, "pro_level": 0.05}
+          },
+          {
+            "id": "schleichgift",
+            "name": "Schleichgift",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Verbraucht 3 Combos, nächste 3 Auto-Attacks vergiften automatisch.",
+            "mechanik": "auto_gift",
+            "combo_kosten": 3,
+            "angriffe": 3,
+            "gift_schaden": 0.02,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "meuchelmoerder",
+            "name": "Meuchelmörder",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Finisher-Schaden +5% pro aktivem DoT auf dem Gegner.",
+            "mechanik": "dot_finisher_bonus",
+            "bonus_pro_dot": 0.05,
+            "skalierung": {"basis": 0.05, "pro_level": 0.003}
+          },
+          {
+            "id": "giftmeister",
+            "name": "Giftmeister",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Gift-Ticks geben +0.5 Combo.",
+            "mechanik": "gift_combo",
+            "combo_pro_tick": 0.5,
+            "skalierung": {"basis": 0.5, "pro_level": 0}
+          }
+        ]
+      }
+    },
+    "klingentraenzer": {
+      "id": "klingentraenzer",
+      "name": "Klingentänzer",
+      "basis_klasse": "schatten",
+      "beschreibung": "Geschwindigkeit und Mehrfachtreffer.",
+      "neue_mechanik": {
+        "name": "Tanz-Rhythmus",
+        "beschreibung": "Nach jedem Finisher werden die ersten 2 Auto-Attacks automatisch zu Combo-Aufbau-Skills — geben +2 Combo statt +1 und haben keinen Cooldown.",
+        "bonus_combo": 2,
+        "anzahl_nach_finisher": 2
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "kt_tanz_rhythmus_angriffe",
+            "name": "Tanz-Rhythmus-Angriffe",
+            "beschreibung": "+1 Angriff mit Bonus",
+            "max_stufen": 2,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "kt_klingensturm_treffer",
+            "name": "Klingensturm-Treffer",
+            "beschreibung": "+1 Treffer pro Combo",
+            "max_stufen": 2,
+            "benoetigt": ["kt_tanz_rhythmus_angriffe"],
+            "schaltet_skill_frei": "klingensturm",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "kt_wirbelklinge_combo",
+            "name": "Wirbelklinge-Combo",
+            "beschreibung": "+1 Combo pro Treffer",
+            "max_stufen": 2,
+            "benoetigt": ["kt_tanz_rhythmus_angriffe"],
+            "schaltet_skill_frei": "wirbelklinge",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "kt_tanz_des_todes_dauer",
+            "name": "Tanz-des-Todes-Dauer",
+            "beschreibung": "+1s",
+            "max_stufen": 2,
+            "benoetigt": ["kt_klingensturm_treffer"],
+            "schaltet_skill_frei": "tanz_des_todes",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "kt_rhythmischer_schlag_rabatt",
+            "name": "Rhythmischer-Schlag-Rabatt",
+            "beschreibung": "Finisher kostet 1 Combo weniger",
+            "max_stufen": 2,
+            "benoetigt": ["kt_wirbelklinge_combo"],
+            "schaltet_skill_frei": "rhythmischer_schlag",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "kt_flinke_klinge_node",
+            "name": "Flinke-Klinge-Node",
+            "beschreibung": "Schaltet Flinke Klinge frei",
+            "max_stufen": 2,
+            "benoetigt": ["kt_tanz_des_todes_dauer"],
+            "schaltet_skill_frei": "flinke_klinge",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "kt_ewiger_tanz_node",
+            "name": "Ewiger-Tanz-Node",
+            "beschreibung": "Schaltet Ewiger Tanz frei",
+            "max_stufen": 2,
+            "benoetigt": ["kt_rhythmischer_schlag_rabatt"],
+            "schaltet_skill_frei": "ewiger_tanz",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "klingensturm",
+            "name": "Klingensturm",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 45,
+            "beschreibung": "Verbraucht alle Combos, macht Combos × 1 schnellen Treffer.",
+            "mechanik": "combo_angriff",
+            "skalierung": {"basis": 0.8, "pro_level": 0.04}
+          },
+          {
+            "id": "wirbelklinge",
+            "name": "Wirbelklinge",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 35,
+            "beschreibung": "3 Treffer die je +1 Combo geben und Atk-Speed kurz erhöhen.",
+            "mechanik": "mehrfach_angriff_combo",
+            "treffer": 3,
+            "combo_pro_treffer": 1,
+            "skalierung": {"basis": 0.7, "pro_level": 0.03}
+          },
+          {
+            "id": "rhythmischer_schlag",
+            "name": "Rhythmischer Schlag",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 30,
+            "beschreibung": "Gibt +3 Combo, nächster Finisher kostet 1 Combo weniger.",
+            "mechanik": "combo_aufbau_rabatt",
+            "combo": 3,
+            "finisher_rabatt": 1,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "tanz_des_todes",
+            "name": "Tanz des Todes",
+            "typ": "aktiv",
+            "cooldown": 18.0,
+            "mana_kosten": 50,
+            "beschreibung": "Verbraucht 4 Combos, nächste 4s jeder Auto-Attack gibt +2 Combo.",
+            "mechanik": "tanz_phase",
+            "combo_kosten": 4,
+            "dauer": 4.0,
+            "bonus_combo": 2,
+            "skalierung": {"basis": 4.0, "pro_level": 0}
+          },
+          {
+            "id": "flinke_klinge",
+            "name": "Flinke Klinge",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Tanz-Rhythmus gibt +3 Combo statt +2 bei den ersten Angriffen.",
+            "mechanik": "tanz_rhythmus_boost",
+            "bonus_combo": 3,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "ewiger_tanz",
+            "name": "Ewiger Tanz",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Finisher-Cooldowns reduzieren sich um 1s pro aufgebautem Combo.",
+            "mechanik": "finisher_cd_reduktion",
+            "reduktion_pro_combo": 1,
+            "skalierung": {"basis": 1, "pro_level": 0.1}
+          }
+        ]
+      }
+    },
+    "phantom": {
+      "id": "phantom",
+      "name": "Phantom",
+      "basis_klasse": "schatten",
+      "beschreibung": "Ausweichen und Gegenangriff.",
+      "neue_mechanik": {
+        "name": "Schattenform",
+        "beschreibung": "Bei 5 Combos kann der Phantom in Schattenform wechseln — für 3s werden alle eingehenden Angriffe automatisch ausgewichen und jeder Ausweicher gibt +2 Combo. Nach Schattenform Reset auf 2 Combos.",
+        "dauer": 3.0,
+        "combo_bei_ausweichen": 2,
+        "reset_nach_form": 2
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "phm_schattenform_dauer",
+            "name": "Schattenform-Dauer",
+            "beschreibung": "+0.5s",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "phm_schattentritt_combo",
+            "name": "Schattentritt-Combo",
+            "beschreibung": "+1 Combo bei Ausweichen",
+            "max_stufen": 2,
+            "benoetigt": ["phm_schattenform_dauer"],
+            "schaltet_skill_frei": "schattentritt",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "phm_geisterklinge_schaden",
+            "name": "Geisterklinge-Schaden",
+            "beschreibung": "+10%",
+            "max_stufen": 2,
+            "benoetigt": ["phm_schattenform_dauer"],
+            "schaltet_skill_frei": "geisterklinge",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "phm_phantomschlag_multiplikator",
+            "name": "Phantomschlag-Multiplikator",
+            "beschreibung": "+10% pro Combo",
+            "max_stufen": 2,
+            "benoetigt": ["phm_schattentritt_combo"],
+            "schaltet_skill_frei": "phantomschlag",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "phm_schattenform_reset",
+            "name": "Schattenform-Reset",
+            "beschreibung": "Behält 3 statt 2 Combos nach Schattenform",
+            "max_stufen": 2,
+            "benoetigt": ["phm_geisterklinge_schaden"],
+            "schaltet_skill_frei": "schattenform_aktivieren",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "phm_nebelwandler_node",
+            "name": "Nebelwandler-Node",
+            "beschreibung": "Schaltet Nebelwandler frei",
+            "max_stufen": 2,
+            "benoetigt": ["phm_phantomschlag_multiplikator"],
+            "schaltet_skill_frei": "nebelwandler",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "phm_schattentanz_node",
+            "name": "Schattentanz-Node",
+            "beschreibung": "Schaltet Schattentanz frei",
+            "max_stufen": 2,
+            "benoetigt": ["phm_schattenform_reset"],
+            "schaltet_skill_frei": "schattentanz",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "schattentritt",
+            "name": "Schattentritt",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Ausweichen +40% für 4s, nächstes Ausweichen gibt +3 Combo.",
+            "mechanik": "ausweichen_boost",
+            "ausweichen_bonus": 0.40,
+            "combo_bei_ausweichen": 3,
+            "dauer": 4.0,
+            "skalierung": {"basis": 0.40, "pro_level": 0.02}
+          },
+          {
+            "id": "geisterklinge",
+            "name": "Geisterklinge",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 40,
+            "beschreibung": "Verbraucht 3 Combos, 150% Schaden, ignoriert Rüstung komplett.",
+            "mechanik": "ruestung_ignoriert",
+            "combo_kosten": 3,
+            "skalierung": {"basis": 1.5, "pro_level": 0.05}
+          },
+          {
+            "id": "schattenform_aktivieren",
+            "name": "Schattenform aktivieren",
+            "typ": "aktiv",
+            "cooldown": 25.0,
+            "mana_kosten": 50,
+            "beschreibung": "Löst Schattenform aus wenn 5 Combos vorhanden.",
+            "mechanik": "schattenform_ausloesen",
+            "combo_benoetigt": 5,
+            "skalierung": {"basis": 1, "pro_level": 0}
+          },
+          {
+            "id": "phantomschlag",
+            "name": "Phantomschlag",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 45,
+            "beschreibung": "Direkt nach Schattenform nutzbar, 200% Schaden + Combo-Multiplikator.",
+            "mechanik": "schattenform_angriff",
+            "multiplikator_pro_combo": 0.10,
+            "skalierung": {"basis": 2.0, "pro_level": 0.08}
+          },
+          {
+            "id": "nebelwandler",
+            "name": "Nebelwandler",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Schattenform-Dauer +1s.",
+            "mechanik": "schattenform_verlaengern",
+            "dauer_bonus": 1.0,
+            "skalierung": {"basis": 1.0, "pro_level": 0}
+          },
+          {
+            "id": "schattentanz",
+            "name": "Schattentanz",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Combo-Verfall-Timer wird während Schattenform pausiert.",
+            "mechanik": "verfall_pause",
+            "skalierung": {"basis": 1, "pro_level": 0}
+          }
+        ]
+      }
+    }
+  }
+}

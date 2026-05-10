@@ -1,0 +1,26 @@
+# Build-Ausgaben
+__pycache__/
+*.pyc
+*.pyo
+dist/
+build/
+*.spec
+
+# Datenbanken (Spielerdaten - nicht ins Repo!)
+*.sqlite
+*.db
+
+# Temporäre Build-Dateien
+config.py.bak
+
+# Logs
+*.log
+
+# IDE & Tools
+.vscode/
+.idea/
+.claude/
+
+# Tests
+.pytest_cache/
+tests/__pycache__/

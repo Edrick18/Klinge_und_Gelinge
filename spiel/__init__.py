@@ -1,0 +1,3 @@
+"""
+spiel - Spiel-Client-Code
+"""

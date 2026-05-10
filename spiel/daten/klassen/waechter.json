@@ -1,0 +1,747 @@
+{
+  "basis": {
+    "id": "waechter",
+    "name": "Wächter",
+    "grundwert": "vitalitaet",
+    "beschreibung": "Unzerstörbare Verteidigung durch Schild-Stapel.",
+    "kern_mechanik": {
+      "name": "Schild-Stapel",
+      "start": 0,
+      "maximum": 5,
+      "aufbau": "nur_durch_skills",
+      "verfall": false,
+      "effekt": "Jeder Stapel absorbiert den nächsten Treffer um X% max HP",
+      "absorption_pro_stapel": 0.08
+    },
+    "skill_baum": {
+      "nodes": [
+        {
+          "id": "wae_schild_staerke",
+          "name": "Schild-Stärke",
+          "beschreibung": "Jeder Stapel absorbiert mehr Schaden",
+          "beschreibung_template": "Jeder Stapel absorbiert +{bonus}% max HP",
+          "beschreibung_werte": {"bonus": 8},
+          "max_stufen": 3,
+          "benoetigt": [],
+          "schaltet_skill_frei": null,
+          "position": {"reihe": 0, "spalte": 1}
+        },
+        {
+          "id": "wae_stapel_max",
+          "name": "Stapel-Maximum",
+          "beschreibung": "+1 maximaler Stapel",
+          "beschreibung_template": "+{bonus} maximaler Stapel",
+          "beschreibung_werte": {"bonus": 1},
+          "max_stufen": 2,
+          "benoetigt": ["wae_schild_staerke"],
+          "schaltet_skill_frei": "schutzschild",
+          "position": {"reihe": 1, "spalte": 0}
+        },
+        {
+          "id": "wae_vergeltungs_kraft",
+          "name": "Vergeltungs-Kraft",
+          "beschreibung": "Vergeltung gibt mehr Schaden zurück",
+          "beschreibung_template": "Vergeltung gibt +{bonus}% Schaden zurück",
+          "beschreibung_werte": {"bonus": 20},
+          "max_stufen": 2,
+          "benoetigt": ["wae_schild_staerke"],
+          "schaltet_skill_frei": "eiserne_haut",
+          "position": {"reihe": 1, "spalte": 2}
+        },
+        {
+          "id": "wae_notreserve_heilung",
+          "name": "Notreserve-Heilung",
+          "beschreibung": "Mehr HP pro verbrauchtem Stapel",
+          "beschreibung_template": "+{bonus}% HP pro Stapel",
+          "beschreibung_werte": {"bonus": 2},
+          "max_stufen": 2,
+          "benoetigt": ["wae_stapel_max"],
+          "schaltet_skill_frei": "notreserve",
+          "position": {"reihe": 2, "spalte": 0}
+        },
+        {
+          "id": "wae_stapel_erhalt",
+          "name": "Stapel-Erhalt",
+          "beschreibung": "20% Chance Stapel bei Treffer nicht zu verlieren",
+          "beschreibung_template": "{chance}% Chance Stapel bei Treffer nicht zu verlieren",
+          "beschreibung_werte": {"chance": 20},
+          "max_stufen": 2,
+          "benoetigt": ["wae_vergeltungs_kraft"],
+          "schaltet_skill_frei": "vergeltung",
+          "position": {"reihe": 2, "spalte": 2}
+        },
+        {
+          "id": "wae_versteinern_dauer",
+          "name": "Versteinern-Dauer",
+          "beschreibung": "+0.5s Unverwundbarkeit",
+          "beschreibung_template": "+{dauer}s Unverwundbarkeit",
+          "beschreibung_werte": {"dauer": 0.5},
+          "max_stufen": 2,
+          "benoetigt": ["wae_notreserve_heilung", "wae_stapel_erhalt"],
+          "schaltet_skill_frei": "versteinern",
+          "position": {"reihe": 3, "spalte": 1}
+        },
+        {
+          "id": "wae_lebensquell_node",
+          "name": "Lebensquell-Node",
+          "beschreibung": "Schaltet Lebensquell frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Lebensquell"},
+          "max_stufen": 2,
+          "benoetigt": ["wae_notreserve_heilung"],
+          "schaltet_skill_frei": "lebensquell",
+          "position": {"reihe": 3, "spalte": 0}
+        },
+        {
+          "id": "wae_stachelhaut_node",
+          "name": "Stachelhaut-Node",
+          "beschreibung": "Schaltet Stachelhaut frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Stachelhaut"},
+          "max_stufen": 2,
+          "benoetigt": ["wae_stapel_erhalt"],
+          "schaltet_skill_frei": "stachelhaut",
+          "position": {"reihe": 3, "spalte": 2}
+        },
+        {
+          "id": "wae_zaehigkeit_node",
+          "name": "Zähigkeit-Node",
+          "beschreibung": "Schaltet Zähigkeit frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {"skill_name": "Zähigkeit"},
+          "max_stufen": 2,
+          "benoetigt": ["wae_versteinern_dauer"],
+          "schaltet_skill_frei": "zaehigkeit",
+          "position": {"reihe": 4, "spalte": 1}
+        }
+      ],
+      "skills": [
+        {
+          "id": "schutzschild",
+          "name": "Schutzschild",
+          "typ": "aktiv",
+          "cooldown": 12.0,
+          "mana_kosten": 40,
+          "beschreibung": "Erzeugt 2 Schild-Stapel sofort.",
+          "beschreibung_template": "Erzeugt {stapel} Schild-Stapel sofort.",
+          "beschreibung_werte": {"stapel": 2},
+          "mechanik": "stapel_erzeugen",
+          "stapel": 2,
+          "skalierung": {"basis": 2, "pro_level": 0}
+        },
+        {
+          "id": "eiserne_haut",
+          "name": "Eiserne Haut",
+          "typ": "aktiv",
+          "cooldown": 15.0,
+          "mana_kosten": 45,
+          "beschreibung": "Erzeugt 1 Stapel. Nächster Treffer komplett absorbiert.",
+          "beschreibung_template": "Erzeugt {stapel} Stapel. Nächster Treffer komplett absorbiert.",
+          "beschreibung_werte": {"stapel": 1},
+          "mechanik": "stapel_erzeugen_voll",
+          "stapel": 1,
+          "skalierung": {"basis": 1, "pro_level": 0}
+        },
+        {
+          "id": "notreserve",
+          "name": "Notreserve",
+          "typ": "aktiv",
+          "cooldown": 20.0,
+          "mana_kosten": 60,
+          "beschreibung": "Verbraucht alle Stapel. Heilt pro Stapel um 8% max HP.",
+          "beschreibung_template": "Verbraucht alle Stapel. Heilt pro Stapel um {heilung}% max HP.",
+          "beschreibung_werte": {"heilung": 8},
+          "mechanik": "stapel_alles_heilung",
+          "heilung_pro_stapel": 0.08,
+          "skalierung": {"basis": 0.08, "pro_level": 0.005}
+        },
+        {
+          "id": "vergeltung",
+          "name": "Vergeltung",
+          "typ": "aktiv",
+          "cooldown": 10.0,
+          "mana_kosten": 35,
+          "beschreibung": "Verbraucht 1 Stapel. Kontert nächsten Angriff mit 80% des absorbierten Schadens.",
+          "beschreibung_template": "Verbraucht {stapel} Stapel. Kontert nächsten Angriff mit {prozent}% des absorbierten Schadens.",
+          "beschreibung_werte": {"stapel": 1, "prozent": 80},
+          "mechanik": "stapel_konter",
+          "stapel_kosten": 1,
+          "skalierung": {"basis": 0.80, "pro_level": 0.02}
+        },
+        {
+          "id": "versteinern",
+          "name": "Versteinern",
+          "typ": "aktiv",
+          "cooldown": 30.0,
+          "mana_kosten": 70,
+          "beschreibung": "Verbraucht 3 Stapel. 3s unverwundbar.",
+          "beschreibung_template": "Verbraucht {stapel} Stapel. {dauer}s unverwundbar.",
+          "beschreibung_werte": {"stapel": 3, "dauer": 3},
+          "mechanik": "stapel_unverwundbar",
+          "stapel_kosten": 3,
+          "dauer": 3.0,
+          "skalierung": {"basis": 3.0, "pro_level": 0}
+        },
+        {
+          "id": "lebensquell",
+          "name": "Lebensquell",
+          "typ": "passiv",
+          "mana_reserviert": 15,
+          "beschreibung": "Wenn Stapel auf 0 sinkt regeneriert Charakter 3% HP/s für 5s.",
+          "beschreibung_template": "Wenn Stapel auf 0 sinkt regeneriert Charakter {regen}% HP/s für {dauer}s.",
+          "beschreibung_werte": {"regen": 3, "dauer": 5},
+          "mechanik": "stapel_leer_regen",
+          "skalierung": {"basis": 0.03, "pro_level": 0.002}
+        },
+        {
+          "id": "stachelhaut",
+          "name": "Stachelhaut",
+          "typ": "passiv",
+          "mana_reserviert": 15,
+          "beschreibung": "Jeder absorbierte Treffer gibt Gegner 5% des Schadens zurück.",
+          "beschreibung_template": "Jeder absorbierte Treffer gibt Gegner {reflektion}% des Schadens zurück.",
+          "beschreibung_werte": {"reflektion": 5},
+          "mechanik": "stapel_reflektion",
+          "skalierung": {"basis": 0.05, "pro_level": 0.003}
+        },
+        {
+          "id": "zaehigkeit",
+          "name": "Zähigkeit",
+          "typ": "passiv",
+          "mana_reserviert": 20,
+          "beschreibung": "Bei 3+ aktiven Stapeln reduziert sich erlittener Schaden um 15%.",
+          "beschreibung_template": "Bei {schwelle}+ aktiven Stapeln reduziert sich erlittener Schaden um {reduktion}%.",
+          "beschreibung_werte": {"schwelle": 3, "reduktion": 15},
+          "mechanik": "stapel_schwelle_reduktion",
+          "stapel_schwelle": 3,
+          "skalierung": {"basis": 0.15, "pro_level": 0.01}
+        }
+      ]
+    }
+  },
+  "spezialisierungen": {
+    "bastian": {
+      "id": "bastian",
+      "name": "Bastian",
+      "basis_klasse": "waechter",
+      "beschreibung": "Maximale Absorption, Schaden durch Stapel.",
+      "neue_mechanik": {
+        "name": "Festung",
+        "beschreibung": "Bei 5 Stapeln werden alle Treffer um 50% reduziert zusätzlich zur normalen Absorption.",
+        "festung_schwelle": 5,
+        "festung_reduktion": 0.50
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "bas_festungs_schwelle",
+            "name": "Festungs-Schwelle",
+            "beschreibung": "Aktiviert bei 4 statt 5 Stapeln",
+            "beschreibung_template": "Aktiviert bei {schwelle} statt 5 Stapeln",
+            "beschreibung_werte": {"schwelle": 4},
+            "max_stufen": 1,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "bas_stachelpanzer_reflektion",
+            "name": "Stachelpanzer-Reflektion",
+            "beschreibung": "+5% Schaden zurück",
+            "beschreibung_template": "+{wert}% Schaden zurück",
+            "beschreibung_werte": {"wert": 5},
+            "max_stufen": 3,
+            "benoetigt": ["bas_festungs_schwelle"],
+            "schaltet_skill_frei": "stachelpanzer",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "bas_mauerwerk_stapel",
+            "name": "Mauerwerk-Stapel",
+            "beschreibung": "+1 Stapel zusätzlich",
+            "beschreibung_template": "+{bonus} Stapel zusätzlich",
+            "beschreibung_werte": {"bonus": 1},
+            "max_stufen": 2,
+            "benoetigt": ["bas_festungs_schwelle"],
+            "schaltet_skill_frei": "mauerwerk",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "bas_unzerbrechlich_treffer",
+            "name": "Unzerbrechlich-Treffer",
+            "beschreibung": "+1 Treffer ohne Stapelverlust",
+            "beschreibung_template": "+{bonus} Treffer ohne Stapelverlust",
+            "beschreibung_werte": {"bonus": 1},
+            "max_stufen": 2,
+            "benoetigt": ["bas_stachelpanzer_reflektion"],
+            "schaltet_skill_frei": "unzerbrechlich",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "bas_schild_regen_timer",
+            "name": "Schild-Regen-Timer",
+            "beschreibung": "-2s",
+            "beschreibung_template": "-{wert}s",
+            "beschreibung_werte": {"wert": 2},
+            "max_stufen": 2,
+            "benoetigt": ["bas_mauerwerk_stapel"],
+            "schaltet_skill_frei": "truemmerangriff",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "bas_granit_node",
+            "name": "Granit-Node",
+            "beschreibung": "Schaltet Granit frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Granit"},
+            "max_stufen": 2,
+            "benoetigt": ["bas_unzerbrechlich_treffer"],
+            "schaltet_skill_frei": "granit",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "bas_schild_regen_node",
+            "name": "Schild-Regeneration-Node",
+            "beschreibung": "Schaltet Schild-Regeneration frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Schild-Regeneration"},
+            "max_stufen": 2,
+            "benoetigt": ["bas_schild_regen_timer"],
+            "schaltet_skill_frei": "schild_regeneration",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "mauerwerk",
+            "name": "Mauerwerk",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 40,
+            "beschreibung": "Erzeugt sofort 3 Stapel.",
+            "beschreibung_template": "Erzeugt sofort {stapel} Stapel.",
+            "beschreibung_werte": {"stapel": 3},
+            "mechanik": "stapel_erzeugen",
+            "stapel": 3,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "stachelpanzer",
+            "name": "Stachelpanzer",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 45,
+            "beschreibung": "Verbraucht 2 Stapel, nächste 6s reflektiert jeder Treffer 30% Schaden.",
+            "beschreibung_template": "Verbraucht {stapel} Stapel, nächste {dauer}s reflektiert jeder Treffer {reflektion}% Schaden.",
+            "beschreibung_werte": {"stapel": 2, "dauer": 6, "reflektion": 30},
+            "mechanik": "stachel_reflektion",
+            "stapel_kosten": 2,
+            "reflektion": 0.30,
+            "dauer": 6.0,
+            "skalierung": {"basis": 0.30, "pro_level": 0.01}
+          },
+          {
+            "id": "unzerbrechlich",
+            "name": "Unzerbrechlich",
+            "typ": "aktiv",
+            "cooldown": 20.0,
+            "mana_kosten": 55,
+            "beschreibung": "Bei 4+ Stapeln: nächste 3 Treffer verbrauchen keinen Stapel.",
+            "beschreibung_template": "Bei {schwelle}+ Stapeln: nächste {treffer} Treffer verbrauchen keinen Stapel.",
+            "beschreibung_werte": {"schwelle": 4, "treffer": 3},
+            "mechanik": "unzerbrechlich_schutz",
+            "stapel_schwelle": 4,
+            "treffer": 3,
+            "skalierung": {"basis": 3, "pro_level": 0}
+          },
+          {
+            "id": "truemmerangriff",
+            "name": "Trümmerangriff",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Verbraucht alle Stapel, Schaden = Anzahl Stapel × 15%.",
+            "beschreibung_template": "Verbraucht alle Stapel, Schaden = Anzahl Stapel × {faktor}%.",
+            "beschreibung_werte": {"faktor": 15},
+            "mechanik": "stapel_angriff",
+            "schaden_pro_stapel": 0.15,
+            "skalierung": {"basis": 0.15, "pro_level": 0.005}
+          },
+          {
+            "id": "granit",
+            "name": "Granit",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Festungs-Zustand reduziert Schaden um 60% statt 50%.",
+            "beschreibung_template": "Festungs-Zustand reduziert Schaden um {wert}% statt 50%.",
+            "beschreibung_werte": {"wert": 60},
+            "mechanik": "festung_verstaerken",
+            "festung_bonus": 0.60,
+            "skalierung": {"basis": 0.60, "pro_level": 0.02}
+          },
+          {
+            "id": "schild_regeneration",
+            "name": "Schild-Regeneration",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Alle 12s automatisch +1 Stapel wenn unter Maximum.",
+            "beschreibung_template": "Alle {intervall}s automatisch +1 Stapel wenn unter Maximum.",
+            "beschreibung_werte": {"intervall": 12},
+            "mechanik": "stapel_regeneration",
+            "intervall": 12,
+            "skalierung": {"basis": 12, "pro_level": 0}
+          }
+        ]
+      }
+    },
+    "blutmagier": {
+      "id": "blutmagier",
+      "name": "Blutmagier",
+      "basis_klasse": "waechter",
+      "beschreibung": "HP opfern für Schaden, Stapel als Schutz.",
+      "neue_mechanik": {
+        "name": "Blutpakt",
+        "beschreibung": "Wenn Charakter HP opfert und Schild-Stapel vorhanden sind werden die geopferten HP von den Stapeln absorbiert.",
+        "absorption_pro_stapel": 0.15
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "blut_blutpakt_absorption",
+            "name": "Blutpakt-Absorption",
+            "beschreibung": "Stapel absorbiert +3% mehr HP",
+            "beschreibung_template": "Stapel absorbiert +{bonus}% mehr HP",
+            "beschreibung_werte": {"bonus": 3},
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "blut_lebensopfer_schaden",
+            "name": "Lebensopfer-Schaden",
+            "beschreibung": "+5% Schaden-Bonus",
+            "beschreibung_template": "+{bonus}% Schaden-Bonus",
+            "beschreibung_werte": {"bonus": 5},
+            "max_stufen": 2,
+            "benoetigt": ["blut_blutpakt_absorption"],
+            "schaltet_skill_frei": "lebensopfer",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "blut_blutexplosion_skalierung",
+            "name": "Blutexplosion-Skalierung",
+            "beschreibung": "+3% Schaden pro Stapel",
+            "beschreibung_template": "+{bonus}% Schaden pro Stapel",
+            "beschreibung_werte": {"bonus": 3},
+            "max_stufen": 2,
+            "benoetigt": ["blut_blutpakt_absorption"],
+            "schaltet_skill_frei": "blutexplosion",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "blut_seelenraub_heilung",
+            "name": "Seelenraub-Heilung",
+            "beschreibung": "+5% Heilung",
+            "beschreibung_template": "+{bonus}% Heilung",
+            "beschreibung_werte": {"bonus": 5},
+            "max_stufen": 2,
+            "benoetigt": ["blut_lebensopfer_schaden"],
+            "schaltet_skill_frei": "seelenraub",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "blut_blutdruck_schwelle",
+            "name": "Blutdruck-Schwelle",
+            "beschreibung": "Bonus aktiviert bereits bei 35% HP",
+            "beschreibung_template": "Bonus aktiviert bereits bei {schwelle}% HP",
+            "beschreibung_werte": {"schwelle": 35},
+            "max_stufen": 2,
+            "benoetigt": ["blut_blutexplosion_skalierung"],
+            "schaltet_skill_frei": "blutschild",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "blut_vampirismus_node",
+            "name": "Vampirismus-Node",
+            "beschreibung": "Schaltet Vampirismus frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Vampirismus"},
+            "max_stufen": 2,
+            "benoetigt": ["blut_seelenraub_heilung"],
+            "schaltet_skill_frei": "vampirismus",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "blut_blutdruck_node",
+            "name": "Blutdruck-Node",
+            "beschreibung": "Schaltet Blutdruck frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Blutdruck"},
+            "max_stufen": 2,
+            "benoetigt": ["blut_blutdruck_schwelle"],
+            "schaltet_skill_frei": "blutdruck",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "lebensopfer",
+            "name": "Lebensopfer",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 40,
+            "beschreibung": "Opfert 15% HP für +40% Schaden für 8s, Stapel absorbieren wenn vorhanden.",
+            "beschreibung_template": "Opfert {hp}% HP für +{bonus}% Schaden für {dauer}s, Stapel absorbieren wenn vorhanden.",
+            "beschreibung_werte": {"hp": 15, "bonus": 40, "dauer": 8},
+            "mechanik": "lebensopfer_skill",
+            "hp_kosten": 0.15,
+            "schaden_bonus": 0.40,
+            "dauer": 8.0,
+            "skalierung": {"basis": 0.40, "pro_level": 0.02}
+          },
+          {
+            "id": "blutexplosion",
+            "name": "Blutexplosion",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 50,
+            "beschreibung": "Verbraucht alle Stapel, Schaden = Stapel × 20% + 10% fehlende HP.",
+            "beschreibung_template": "Verbraucht alle Stapel, Schaden = Stapel × {stapel}% + {fehlend}% fehlende HP.",
+            "beschreibung_werte": {"stapel": 20, "fehlend": 10},
+            "mechanik": "blutexplosion",
+            "schaden_pro_stapel": 0.20,
+            "fehlende_hp_bonus": 0.10,
+            "skalierung": {"basis": 0.20, "pro_level": 0.01}
+          },
+          {
+            "id": "seelenraub",
+            "name": "Seelenraub",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 35,
+            "beschreibung": "120% Schaden, heilt um 40% des verursachten Schadens.",
+            "beschreibung_template": "{schaden}% Schaden, heilt um {heilung}% des verursachten Schadens.",
+            "beschreibung_werte": {"schaden": 120, "heilung": 40},
+            "mechanik": "seelenraub_skill",
+            "heilung_prozent": 0.40,
+            "skalierung": {"basis": 1.20, "pro_level": 0.04}
+          },
+          {
+            "id": "blutschild",
+            "name": "Blutschild",
+            "typ": "aktiv",
+            "cooldown": 14.0,
+            "mana_kosten": 45,
+            "beschreibung": "Opfert 10% HP um 2 Stapel zu erzeugen.",
+            "beschreibung_template": "Opfert {hp}% HP um {stapel} Stapel zu erzeugen.",
+            "beschreibung_werte": {"hp": 10, "stapel": 2},
+            "mechanik": "blutschild_skill",
+            "hp_kosten": 0.10,
+            "stapel": 2,
+            "skalierung": {"basis": 2, "pro_level": 0}
+          },
+          {
+            "id": "vampirismus",
+            "name": "Vampirismus",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Jeder Angriff heilt um 3% des Schadens wenn Stapel vorhanden.",
+            "beschreibung_template": "Jeder Angriff heilt um {heilung}% des Schadens wenn Stapel vorhanden.",
+            "beschreibung_werte": {"heilung": 3},
+            "mechanik": "vampirismus_heilung",
+            "heilung_prozent": 0.03,
+            "skalierung": {"basis": 0.03, "pro_level": 0.002}
+          },
+          {
+            "id": "blutdruck",
+            "name": "Blutdruck",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Je weniger HP desto mehr Schaden — bis +30% bei unter 30% HP.",
+            "beschreibung_template": "Je weniger HP desto mehr Schaden — bis +{bonus}% bei unter {schwelle}% HP.",
+            "beschreibung_werte": {"bonus": 30, "schwelle": 30},
+            "mechanik": "blutdruck_bonus",
+            "max_bonus": 0.30,
+            "hp_schwelle": 0.30,
+            "skalierung": {"basis": 0.30, "pro_level": 0.01}
+          }
+        ]
+      }
+    },
+    "kriegspriester": {
+      "id": "kriegspriester",
+      "name": "Kriegspriester",
+      "basis_klasse": "waechter",
+      "beschreibung": "Heilung und Gegenangriffe durch Stapel.",
+      "neue_mechanik": {
+        "name": "Heilige Absolution",
+        "beschreibung": "Wenn ein Stapel einen Treffer absorbiert hat der Charakter 2s Zeit um einen Skill zu aktivieren. Tut er das bekommt der Skill +30% Wirkung.",
+        "fenster_dauer": 2.0,
+        "wirkungs_bonus": 0.30
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "kp_absolutions_bonus",
+            "name": "Absolutions-Bonus",
+            "beschreibung": "+5% Wirkung",
+            "beschreibung_template": "+{bonus}% Wirkung",
+            "beschreibung_werte": {"bonus": 5},
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {"reihe": 0, "spalte": 1}
+          },
+          {
+            "id": "kp_heilswelle_basis",
+            "name": "Heilswelle-Basis",
+            "beschreibung": "+3% Heilung",
+            "beschreibung_template": "+{bonus}% Heilung",
+            "beschreibung_werte": {"bonus": 3},
+            "max_stufen": 2,
+            "benoetigt": ["kp_absolutions_bonus"],
+            "schaltet_skill_frei": "heilswelle",
+            "position": {"reihe": 1, "spalte": 0}
+          },
+          {
+            "id": "kp_goettlicher_konter_schaden",
+            "name": "Göttlicher-Konter-Schaden",
+            "beschreibung": "+10% Konterschaden",
+            "beschreibung_template": "+{bonus}% Konterschaden",
+            "beschreibung_werte": {"bonus": 10},
+            "max_stufen": 2,
+            "benoetigt": ["kp_absolutions_bonus"],
+            "schaltet_skill_frei": "goettlicher_konter",
+            "position": {"reihe": 1, "spalte": 2}
+          },
+          {
+            "id": "kp_laeuterung_immuenitaet",
+            "name": "Läuterungs-Immunität",
+            "beschreibung": "+1s Immunität nach Absolution",
+            "beschreibung_template": "+{dauer}s Immunität nach Absolution",
+            "beschreibung_werte": {"dauer": 1},
+            "max_stufen": 2,
+            "benoetigt": ["kp_heilswelle_basis"],
+            "schaltet_skill_frei": "laeuterung",
+            "position": {"reihe": 2, "spalte": 0}
+          },
+          {
+            "id": "kp_stapel_aufbau",
+            "name": "Stapel-Aufbau",
+            "beschreibung": "Schutzschild gibt +1 Stapel zusätzlich",
+            "beschreibung_template": "Schutzschild gibt +{bonus} Stapel zusätzlich",
+            "beschreibung_werte": {"bonus": 1},
+            "max_stufen": 2,
+            "benoetigt": ["kp_goettlicher_konter_schaden"],
+            "schaltet_skill_frei": "heiliger_zorn",
+            "position": {"reihe": 2, "spalte": 2}
+          },
+          {
+            "id": "kp_segen_node",
+            "name": "Segen-Node",
+            "beschreibung": "Schaltet Segen frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Segen"},
+            "max_stufen": 2,
+            "benoetigt": ["kp_laeuterung_immuenitaet"],
+            "schaltet_skill_frei": "segen",
+            "position": {"reihe": 3, "spalte": 0}
+          },
+          {
+            "id": "kp_goettliche_ruestung_node",
+            "name": "Göttliche-Rüstung-Node",
+            "beschreibung": "Schaltet Göttliche Rüstung frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {"skill_name": "Göttliche Rüstung"},
+            "max_stufen": 2,
+            "benoetigt": ["kp_stapel_aufbau"],
+            "schaltet_skill_frei": "goettliche_ruestung",
+            "position": {"reihe": 3, "spalte": 2}
+          }
+        ],
+        "skills": [
+          {
+            "id": "heilswelle",
+            "name": "Heilswelle",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 45,
+            "beschreibung": "Heilt 20% max HP, nach Absolution +30% Heilung.",
+            "beschreibung_template": "Heilt {heilung}% max HP, nach Absolution +{bonus}% Heilung.",
+            "beschreibung_werte": {"heilung": 20, "bonus": 30},
+            "mechanik": "heilung_mit_absolution",
+            "heilung": 0.20,
+            "absolution_bonus": 0.30,
+            "skalierung": {"basis": 0.20, "pro_level": 0.01}
+          },
+          {
+            "id": "goettlicher_konter",
+            "name": "Göttlicher Konter",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 35,
+            "beschreibung": "Verbraucht 1 Stapel, kontert mit 100% des absorbierten Schadens.",
+            "beschreibung_template": "Verbraucht {stapel} Stapel, kontert mit {faktor}% des absorbierten Schadens.",
+            "beschreibung_werte": {"stapel": 1, "faktor": 100},
+            "mechanik": "stapel_konter",
+            "stapel_kosten": 1,
+            "konterschaden": 1.0,
+            "skalierung": {"basis": 1.0, "pro_level": 0.05}
+          },
+          {
+            "id": "laeuterung",
+            "name": "Läuterung",
+            "typ": "aktiv",
+            "cooldown": 18.0,
+            "mana_kosten": 50,
+            "beschreibung": "Entfernt alle Debuffs, nach Absolution auch 4s immun gegen Debuffs.",
+            "beschreibung_template": "Entfernt alle Debuffs, nach Absolution auch {dauer}s immun gegen Debuffs.",
+            "beschreibung_werte": {"dauer": 4},
+            "mechanik": "debuff_entfernen_mit_absolution",
+            "immunitaet_dauer": 4.0,
+            "skalierung": {"basis": 4.0, "pro_level": 0}
+          },
+          {
+            "id": "heiliger_zorn",
+            "name": "Heiliger Zorn",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 40,
+            "beschreibung": "Nach Absolution: nächster Angriff macht +80% Schaden.",
+            "beschreibung_template": "Nach Absolution: nächster Angriff macht +{bonus}% Schaden.",
+            "beschreibung_werte": {"bonus": 80},
+            "mechanik": "absolution_angriff",
+            "schaden_bonus": 0.80,
+            "skalierung": {"basis": 0.80, "pro_level": 0.03}
+          },
+          {
+            "id": "segen",
+            "name": "Segen",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Absolutions-Fenster dauert 3s statt 2s.",
+            "beschreibung_template": "Absolutions-Fenster dauert {dauer}s statt 2s.",
+            "beschreibung_werte": {"dauer": 3},
+            "mechanik": "absolution_verlaengern",
+            "neue_dauer": 3.0,
+            "skalierung": {"basis": 3.0, "pro_level": 0}
+          },
+          {
+            "id": "goettliche_ruestung",
+            "name": "Göttliche Rüstung",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Bei 3+ Stapeln reduziert sich erlittener Schaden um 10%.",
+            "beschreibung_template": "Bei {schwelle}+ Stapeln reduziert sich erlittener Schaden um {reduktion}%.",
+            "beschreibung_werte": {"schwelle": 3, "reduktion": 10},
+            "mechanik": "stapel_schwelle_reduktion",
+            "stapel_schwelle": 3,
+            "schaden_reduktion": 0.10,
+            "skalierung": {"basis": 0.10, "pro_level": 0.005}
+          }
+        ]
+      }
+    }
+  }
+}

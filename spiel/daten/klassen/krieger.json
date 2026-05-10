@@ -1,0 +1,1072 @@
+{
+  "basis": {
+    "id": "krieger",
+    "name": "Krieger",
+    "grundwert": "staerke",
+    "beschreibung": "Meister des Nahkampfs der durch Rage immer gefährlicher wird.",
+    "kern_mechanik": {
+      "name": "Rage",
+      "start": 0,
+      "maximum": 100,
+      "aufbau": {
+        "eigener_treffer": 10,
+        "erhaltener_treffer": 5
+      },
+      "verfall": false,
+      "effekt": "Pro 10 Rage +2% Angriffsgeschwindigkeit und +1% Schaden",
+      "burst": {
+        "schwelle": 100,
+        "name": "Berserk",
+        "dauer": 8,
+        "bonus_schaden": 20,
+        "bonus_atk_speed": 10,
+        "reset_auf": 0
+      }
+    },
+    "skill_baum": {
+      "nodes": [
+        {
+          "id": "kri_rage_aufbau",
+          "name": "Rage-Aufbau",
+          "beschreibung": "Auto-Attacks geben +2 Rage",
+          "beschreibung_template": "Auto-Attacks geben +{rage_bonus} Rage",
+          "beschreibung_werte": {
+            "rage_bonus": 2
+          },
+          "max_stufen": 3,
+          "benoetigt": [],
+          "schaltet_skill_frei": null,
+          "position": {
+            "reihe": 0,
+            "spalte": 1
+          }
+        },
+        {
+          "id": "kri_rage_schwelle",
+          "name": "Rage-Schwelle",
+          "beschreibung": "Passive Skills aktivieren 10 Rage früher",
+          "beschreibung_template": "Passive Skills aktivieren {rage_reduktion} Rage früher",
+          "beschreibung_werte": {
+            "rage_reduktion": 10
+          },
+          "max_stufen": 2,
+          "benoetigt": [
+            "kri_rage_aufbau"
+          ],
+          "schaltet_skill_frei": "brutaler_hieb",
+          "position": {
+            "reihe": 1,
+            "spalte": 0
+          }
+        },
+        {
+          "id": "kri_rage_uebertrag",
+          "name": "Rage-Übertrag",
+          "beschreibung": "Raserei behält 20% der verbrauchten Rage",
+          "beschreibung_template": "Raserei behält {prozent}% der verbrauchten Rage",
+          "beschreibung_werte": {
+            "prozent": 20
+          },
+          "max_stufen": 2,
+          "benoetigt": [
+            "kri_rage_aufbau"
+          ],
+          "schaltet_skill_frei": "kriegsschrei",
+          "position": {
+            "reihe": 1,
+            "spalte": 2
+          }
+        },
+        {
+          "id": "kri_kriegsschrei_reichweite",
+          "name": "Kriegsschrei-Reichweite",
+          "beschreibung": "+1 Angriff bei Kriegsschrei",
+          "beschreibung_template": "+{anzahl} Angriff bei Kriegsschrei",
+          "beschreibung_werte": {
+            "anzahl": 1
+          },
+          "max_stufen": 2,
+          "benoetigt": [
+            "kri_rage_uebertrag"
+          ],
+          "schaltet_skill_frei": "zermuerbern",
+          "position": {
+            "reihe": 2,
+            "spalte": 2
+          }
+        },
+        {
+          "id": "kri_zermuerbern_intensitaet",
+          "name": "Zermürben-Intensität",
+          "beschreibung": "Mehr Rage beim Einsatz = mehr Rüstungsreduktion",
+          "beschreibung_template": "Mehr Rage beim Einsatz = mehr Rüstungsreduktion",
+          "beschreibung_werte": {},
+          "max_stufen": 2,
+          "benoetigt": [
+            "kri_rage_schwelle"
+          ],
+          "schaltet_skill_frei": "raserei",
+          "position": {
+            "reihe": 2,
+            "spalte": 0
+          }
+        },
+        {
+          "id": "kri_todestoss_schwelle",
+          "name": "Todesstoß-Schwelle",
+          "beschreibung": "Todesstoß ab 70 statt 80 Rage nutzbar",
+          "beschreibung_template": "Todesstoß ab {rage_schwelle} statt 80 Rage nutzbar",
+          "beschreibung_werte": {
+            "rage_schwelle": 70
+          },
+          "max_stufen": 1,
+          "benoetigt": [
+            "kri_zermuerbern_intensitaet",
+            "kri_kriegsschrei_reichweite"
+          ],
+          "schaltet_skill_frei": "todestoss",
+          "position": {
+            "reihe": 3,
+            "spalte": 1
+          }
+        },
+        {
+          "id": "kri_raserei_tempo",
+          "name": "Raserei-Tempo",
+          "beschreibung": "Raserei-Angriffe schneller",
+          "beschreibung_template": "Raserei-Angriffe +{bonus}% schneller",
+          "beschreibung_werte": {
+            "bonus": 10
+          },
+          "max_stufen": 2,
+          "benoetigt": [
+            "kri_zermuerbern_intensitaet"
+          ],
+          "schaltet_skill_frei": "blutdurst",
+          "position": {
+            "reihe": 3,
+            "spalte": 0
+          }
+        },
+        {
+          "id": "kri_passive_node",
+          "name": "Kriegsinstinkt-Node",
+          "beschreibung": "Schaltet Kriegsinstinkt frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {
+            "skill_name": "Kriegsinstinkt"
+          },
+          "max_stufen": 2,
+          "benoetigt": [
+            "kri_kriegsschrei_reichweite"
+          ],
+          "schaltet_skill_frei": "unaufhaltsam",
+          "position": {
+            "reihe": 3,
+            "spalte": 2
+          }
+        },
+        {
+          "id": "kri_kriegsinstinkt_node",
+          "name": "Kriegsinstinkt-Meister",
+          "beschreibung": "Schaltet Kriegsinstinkt frei",
+          "beschreibung_template": "Schaltet {skill_name} frei",
+          "beschreibung_werte": {
+            "skill_name": "Kriegsinstinkt"
+          },
+          "max_stufen": 2,
+          "benoetigt": [
+            "kri_todestoss_schwelle"
+          ],
+          "schaltet_skill_frei": "kriegsinstinkt",
+          "position": {
+            "reihe": 4,
+            "spalte": 1
+          }
+        }
+      ],
+      "skills": [
+        {
+          "id": "brutaler_hieb",
+          "name": "Brutaler Hieb",
+          "typ": "aktiv",
+          "cooldown": 6.0,
+          "mana_kosten": 25,
+          "beschreibung": "Verbraucht 30 Rage für +40% Schaden. Ohne Rage normaler Angriff.",
+          "beschreibung_template": "Verbraucht {rage_kosten} Rage für +{bonus}% Schaden. Ohne Rage normaler Angriff.",
+          "beschreibung_werte": {
+            "rage_kosten": 30,
+            "bonus": 40
+          },
+          "mechanik": "rage_verbrauch",
+          "rage_kosten": 30,
+          "skalierung": {
+            "basis": 1.4,
+            "pro_level": 0.04
+          }
+        },
+        {
+          "id": "kriegsschrei",
+          "name": "Kriegsschrei",
+          "typ": "aktiv",
+          "cooldown": 20.0,
+          "mana_kosten": 50,
+          "beschreibung": "Verbraucht 50 Rage. Nächste 5 Angriffe kosten keine Rage und +25% Schaden.",
+          "beschreibung_template": "Verbraucht {rage_kosten} Rage. Nächste {angriffe} Angriffe kosten keine Rage und +{bonus}% Schaden.",
+          "beschreibung_werte": {
+            "rage_kosten": 50,
+            "angriffe": 5,
+            "bonus": 25
+          },
+          "mechanik": "rage_verbrauch",
+          "rage_kosten": 50,
+          "skalierung": {
+            "basis": 0.25,
+            "pro_level": 0.01
+          }
+        },
+        {
+          "id": "zermuerbern",
+          "name": "Zermürben",
+          "typ": "aktiv",
+          "cooldown": 8.0,
+          "mana_kosten": 35,
+          "beschreibung": "Kostet 20 Rage. Reduziert Gegner-Rüstung für 8s. Mehr Rage = längere Dauer.",
+          "beschreibung_template": "Kostet {rage_kosten} Rage. Reduziert Gegner-Rüstung für {dauer}s. Mehr Rage = längere Dauer.",
+          "beschreibung_werte": {
+            "rage_kosten": 20,
+            "dauer": 8
+          },
+          "mechanik": "rage_verbrauch",
+          "rage_kosten": 20,
+          "skalierung": {
+            "basis": 0.15,
+            "pro_level": 0.01
+          }
+        },
+        {
+          "id": "raserei",
+          "name": "Raserei",
+          "typ": "aktiv",
+          "cooldown": 14.0,
+          "mana_kosten": 60,
+          "beschreibung": "Verbraucht alle Rage. 3 schnelle Angriffe. Schaden skaliert mit verbrauchter Rage.",
+          "beschreibung_template": "Verbraucht alle Rage. {anzahl} schnelle Angriffe. Schaden skaliert mit verbrauchter Rage.",
+          "beschreibung_werte": {
+            "anzahl": 3
+          },
+          "mechanik": "rage_alles_verbrauch",
+          "skalierung": {
+            "basis": 0.03,
+            "pro_level": 0.002
+          }
+        },
+        {
+          "id": "todestoss",
+          "name": "Todesstoß",
+          "typ": "aktiv",
+          "cooldown": 25.0,
+          "mana_kosten": 80,
+          "beschreibung": "Nur nutzbar ab 80 Rage. Verbraucht alles. Massiver Einzelschaden.",
+          "beschreibung_template": "Nur nutzbar ab {min_rage} Rage. Verbraucht alles. Massiver Einzelschaden.",
+          "beschreibung_werte": {
+            "min_rage": 80
+          },
+          "mechanik": "rage_alles_verbrauch",
+          "rage_minimum": 80,
+          "skalierung": {
+            "basis": 3.0,
+            "pro_level": 0.1
+          }
+        },
+        {
+          "id": "blutdurst",
+          "name": "Blutdurst",
+          "typ": "passiv",
+          "mana_reserviert": 10,
+          "beschreibung": "Jeder Treffer bei über 50 Rage heilt um 2% max HP.",
+          "beschreibung_template": "Jeder Treffer bei über {schwelle} Rage heilt um {heilung}% max HP.",
+          "beschreibung_werte": {
+            "schwelle": 50,
+            "heilung": 2
+          },
+          "mechanik": "rage_schwelle_heilung",
+          "rage_schwelle": 50,
+          "skalierung": {
+            "basis": 0.02,
+            "pro_level": 0.001
+          }
+        },
+        {
+          "id": "unaufhaltsam",
+          "name": "Unaufhaltsam",
+          "typ": "passiv",
+          "mana_reserviert": 15,
+          "beschreibung": "Bei über 70 Rage ignorieren Angriffe 20% Rüstung.",
+          "beschreibung_template": "Bei über {schwelle} Rage ignorieren Angriffe {durchdringung}% Rüstung.",
+          "beschreibung_werte": {
+            "schwelle": 70,
+            "durchdringung": 20
+          },
+          "mechanik": "rage_schwelle_durchdringung",
+          "rage_schwelle": 70,
+          "skalierung": {
+            "basis": 0.2,
+            "pro_level": 0.01
+          }
+        },
+        {
+          "id": "kriegsinstinkt",
+          "name": "Kriegsinstinkt",
+          "typ": "passiv",
+          "mana_reserviert": 20,
+          "beschreibung": "Erhaltene Treffer geben doppelt Rage (+10 statt +5).",
+          "beschreibung_template": "Erhaltene Treffer geben {faktor}x Rage (+{bonus} statt +5).",
+          "beschreibung_werte": {
+            "faktor": 2,
+            "bonus": 10
+          },
+          "mechanik": "rage_aufbau_verdoppeln",
+          "skalierung": {
+            "basis": 2.0,
+            "pro_level": 0.05
+          }
+        }
+      ]
+    }
+  },
+  "spezialisierungen": {
+    "berserker": {
+      "id": "berserker",
+      "name": "Berserker",
+      "basis_klasse": "krieger",
+      "beschreibung": "Maximaler Schaden durch unkontrollierte Rage.",
+      "neue_mechanik": {
+        "name": "Blut-Rausch",
+        "beschreibung": "Bei aktivem Berserk verliert Charakter 2% HP/s aber Schaden steigt +10% pro Sekunde",
+        "hp_verlust_pro_sekunde": 0.02,
+        "schaden_bonus_pro_sekunde": 0.1
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "ber_blut_rausch_dauer",
+            "name": "Blut-Rausch-Dauer",
+            "beschreibung": "+1s Blut-Rausch",
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {
+              "reihe": 0,
+              "spalte": 1
+            }
+          },
+          {
+            "id": "ber_blut_rausch_schaden",
+            "name": "Blut-Rausch-Schaden",
+            "beschreibung": "+2% Schaden pro Sekunde im Rausch",
+            "max_stufen": 2,
+            "benoetigt": [
+              "ber_blut_rausch_dauer"
+            ],
+            "schaltet_skill_frei": "zerfleischen",
+            "position": {
+              "reihe": 1,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "ber_hp_verlust_reduzieren",
+            "name": "HP-Verlust reduzieren",
+            "beschreibung": "-0.5% HP/s im Rausch",
+            "max_stufen": 2,
+            "benoetigt": [
+              "ber_blut_rausch_dauer"
+            ],
+            "schaltet_skill_frei": "blutschrei",
+            "position": {
+              "reihe": 1,
+              "spalte": 2
+            }
+          },
+          {
+            "id": "ber_zerfleischen_rage",
+            "name": "Zerfleischen-Rage",
+            "beschreibung": "+1 Rage pro Treffer zurück",
+            "max_stufen": 2,
+            "benoetigt": [
+              "ber_blut_rausch_schaden"
+            ],
+            "schaltet_skill_frei": "hinrichtung",
+            "position": {
+              "reihe": 2,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "ber_hinrichtungs_schwelle",
+            "name": "Hinrichtungs-Schwelle",
+            "beschreibung": "Hinrichtung nutzbar unter 35% statt 30%",
+            "max_stufen": 2,
+            "benoetigt": [
+              "ber_hp_verlust_reduzieren"
+            ],
+            "schaltet_skill_frei": "wut_entladung",
+            "position": {
+              "reihe": 2,
+              "spalte": 2
+            }
+          },
+          {
+            "id": "ber_blutgier_node",
+            "name": "Blutgier-Node",
+            "beschreibung": "Schaltet Blutgier frei",
+            "max_stufen": 2,
+            "benoetigt": [
+              "ber_zerfleischen_rage"
+            ],
+            "schaltet_skill_frei": "blutgier",
+            "position": {
+              "reihe": 3,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "ber_adrenalin_node",
+            "name": "Adrenalin-Node",
+            "beschreibung": "Schaltet Adrenalin frei",
+            "max_stufen": 2,
+            "benoetigt": [
+              "ber_hinrichtungs_schwelle"
+            ],
+            "schaltet_skill_frei": "adrenalin",
+            "position": {
+              "reihe": 3,
+              "spalte": 2
+            }
+          }
+        ],
+        "skills": [
+          {
+            "id": "zerfleischen",
+            "name": "Zerfleischen",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 45,
+            "beschreibung": "Verbraucht 40 Rage. 5 schnelle schwache Treffer, jeder gibt +3 Rage zurück.",
+            "beschreibung_template": "Verbraucht {rage_kosten} Rage. {anzahl} schnelle schwache Treffer, jeder gibt +{rueckgabe} Rage zurück.",
+            "beschreibung_werte": {
+              "rage_kosten": 40,
+              "anzahl": 5,
+              "rueckgabe": 3
+            },
+            "mechanik": "rage_verbrauch_mehrfach",
+            "rage_kosten": 40,
+            "rage_rueckgabe_pro_treffer": 3,
+            "skalierung": {
+              "basis": 0.6,
+              "pro_level": 0.02
+            }
+          },
+          {
+            "id": "blutschrei",
+            "name": "Blutschrei",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 0,
+            "beschreibung": "Opfert 10% HP für sofort +50 Rage.",
+            "beschreibung_template": "Opfert {hp_prozent}% HP für sofort +{rage} Rage.",
+            "beschreibung_werte": {
+              "hp_prozent": 10,
+              "rage": 50
+            },
+            "mechanik": "hp_zu_rage",
+            "hp_kosten": 0.1,
+            "rage_gewinn": 50,
+            "skalierung": {
+              "basis": 50,
+              "pro_level": 2
+            }
+          },
+          {
+            "id": "hinrichtung",
+            "name": "Hinrichtung",
+            "typ": "aktiv",
+            "cooldown": 20.0,
+            "mana_kosten": 70,
+            "beschreibung": "Verbraucht alle Rage. Schaden = Rage × 3%. Nur unter 30% Gegner-HP.",
+            "beschreibung_template": "Verbraucht alle Rage. Schaden = Rage × {faktor}%. Nur unter {schwelle}% Gegner-HP.",
+            "beschreibung_werte": {
+              "faktor": 3,
+              "schwelle": 30
+            },
+            "mechanik": "rage_alles_execute",
+            "execute_schwelle": 0.3,
+            "skalierung": {
+              "basis": 0.03,
+              "pro_level": 0.002
+            }
+          },
+          {
+            "id": "wut_entladung",
+            "name": "Wut-Entladung",
+            "typ": "aktiv",
+            "cooldown": 18.0,
+            "mana_kosten": 60,
+            "beschreibung": "Verbraucht 60 Rage. Nächste 4s kosten Skills keine Rage.",
+            "beschreibung_template": "Verbraucht {rage_kosten} Rage. Nächste {dauer}s kosten Skills keine Rage.",
+            "beschreibung_werte": {
+              "rage_kosten": 60,
+              "dauer": 4
+            },
+            "mechanik": "rage_verbrauch_skill_gratis",
+            "rage_kosten": 60,
+            "dauer": 4.0,
+            "skalierung": {
+              "basis": 4.0,
+              "pro_level": 0.2
+            }
+          },
+          {
+            "id": "blutgier",
+            "name": "Blutgier",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Erhaltene Treffer geben +8 Rage statt +5.",
+            "beschreibung_template": "Erhaltene Treffer geben +{bonus} Rage statt +5.",
+            "beschreibung_werte": {
+              "bonus": 8
+            },
+            "mechanik": "rage_aufbau_erhoehen",
+            "neuer_wert": 8,
+            "skalierung": {
+              "basis": 8,
+              "pro_level": 0.5
+            }
+          },
+          {
+            "id": "adrenalin",
+            "name": "Adrenalin",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Im Berserk-Modus steigt Rage-Aufbau um 50%.",
+            "beschreibung_template": "Im Berserk-Modus steigt Rage-Aufbau um {bonus}%.",
+            "beschreibung_werte": {
+              "bonus": 50
+            },
+            "mechanik": "berserk_rage_bonus",
+            "skalierung": {
+              "basis": 0.5,
+              "pro_level": 0.02
+            }
+          }
+        ]
+      }
+    },
+    "ritter": {
+      "id": "ritter",
+      "name": "Ritter",
+      "basis_klasse": "krieger",
+      "beschreibung": "Ausgewogen, Rage für Angriff und Verteidigung.",
+      "neue_mechanik": {
+        "name": "Kampf-Haltung",
+        "beschreibung": "Angriffs-Haltung: +3% Schaden pro 10 Rage. Verteidigungs-Haltung: +2% Schadensreduktion pro 10 Rage.",
+        "haltungen": [
+          "angriff",
+          "verteidigung"
+        ],
+        "start_haltung": "angriff",
+        "angriff_bonus": 0.03,
+        "verteidigung_bonus": 0.02
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "rit_haltungs_bonus",
+            "name": "Haltungs-Bonus",
+            "beschreibung": "+0.5% Effekt pro 10 Rage",
+            "beschreibung_template": "+{bonus}% Effekt pro 10 Rage",
+            "beschreibung_werte": {
+              "bonus": 0.5
+            },
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {
+              "reihe": 0,
+              "spalte": 1
+            }
+          },
+          {
+            "id": "rit_haltungswechsel_kosten",
+            "name": "Haltungswechsel-Kosten",
+            "beschreibung": "-5 Rage",
+            "beschreibung_template": "-{kosten} Rage",
+            "beschreibung_werte": {
+              "kosten": 5
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "rit_haltungs_bonus"
+            ],
+            "schaltet_skill_frei": "haltungswechsel",
+            "position": {
+              "reihe": 1,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "rit_schildschlag_stapel",
+            "name": "Schildschlag-Stapel",
+            "beschreibung": "+1 Stapel bei Verteidigungs-Haltung",
+            "beschreibung_template": "+{anzahl} Stapel bei Verteidigungs-Haltung",
+            "beschreibung_werte": {
+              "anzahl": 1
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "rit_haltungs_bonus"
+            ],
+            "schaltet_skill_frei": "schildschlag",
+            "position": {
+              "reihe": 1,
+              "spalte": 2
+            }
+          },
+          {
+            "id": "rit_standhaft_rage",
+            "name": "Standhaft-Rage",
+            "beschreibung": "+5 Rage zusätzlich",
+            "beschreibung_template": "+{bonus} Rage zusätzlich",
+            "beschreibung_werte": {
+              "bonus": 5
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "rit_haltungswechsel_kosten"
+            ],
+            "schaltet_skill_frei": "standhaft",
+            "position": {
+              "reihe": 2,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "rit_praezisions_durchdringung",
+            "name": "Präzisionsschlag-Durchdringung",
+            "beschreibung": "+5% Rüstungsignorierung",
+            "beschreibung_template": "+{wert}% Rüstungsignorierung",
+            "beschreibung_werte": {
+              "wert": 5
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "rit_schildschlag_stapel"
+            ],
+            "schaltet_skill_frei": "praezisionsschlag",
+            "position": {
+              "reihe": 2,
+              "spalte": 2
+            }
+          },
+          {
+            "id": "rit_disziplin_node",
+            "name": "Disziplin-Node",
+            "beschreibung": "Schaltet Disziplin frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {
+              "skill_name": "Disziplin"
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "rit_standhaft_rage"
+            ],
+            "schaltet_skill_frei": "disziplin",
+            "position": {
+              "reihe": 3,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "rit_kampferfahrung_node",
+            "name": "Kampferfahrung-Node",
+            "beschreibung": "Schaltet Kampferfahrung frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {
+              "skill_name": "Kampferfahrung"
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "rit_praezisions_durchdringung"
+            ],
+            "schaltet_skill_frei": "kampferfahrung",
+            "position": {
+              "reihe": 3,
+              "spalte": 2
+            }
+          }
+        ],
+        "skills": [
+          {
+            "id": "haltungswechsel",
+            "name": "Haltungswechsel",
+            "typ": "aktiv",
+            "cooldown": 8.0,
+            "mana_kosten": 30,
+            "beschreibung": "Wechselt zwischen Angriff und Verteidigung, kostet 20 Rage.",
+            "beschreibung_template": "Wechselt zwischen Angriff und Verteidigung, kostet {kosten} Rage.",
+            "beschreibung_werte": {
+              "kosten": 20
+            },
+            "mechanik": "haltungswechsel",
+            "rage_kosten": 20,
+            "skalierung": {
+              "basis": 1.0,
+              "pro_level": 0
+            }
+          },
+          {
+            "id": "schildschlag",
+            "name": "Schildschlag",
+            "typ": "aktiv",
+            "cooldown": 10.0,
+            "mana_kosten": 35,
+            "beschreibung": "100% Schaden + 1 Schild-Stapel wenn in Verteidigungs-Haltung.",
+            "beschreibung_template": "{schaden}% Schaden + {stapel} Schild-Stapel wenn in Verteidigungs-Haltung.",
+            "beschreibung_werte": {
+              "schaden": 100,
+              "stapel": 1
+            },
+            "mechanik": "schildschlag_bedingt",
+            "skalierung": {
+              "basis": 1.0,
+              "pro_level": 0.03
+            }
+          },
+          {
+            "id": "praezisionsschlag",
+            "name": "Präzisionsschlag",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 40,
+            "beschreibung": "In Angriffs-Haltung: ignoriert 40% Rüstung, kostet 30 Rage.",
+            "beschreibung_template": "In Angriffs-Haltung: ignoriert {durchdringung}% Rüstung, kostet {kosten} Rage.",
+            "beschreibung_werte": {
+              "durchdringung": 40,
+              "kosten": 30
+            },
+            "mechanik": "praezisionsangriff",
+            "rage_kosten": 30,
+            "durchdringung": 0.4,
+            "skalierung": {
+              "basis": 1.2,
+              "pro_level": 0.04
+            }
+          },
+          {
+            "id": "standhaft",
+            "name": "Standhaft",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 45,
+            "beschreibung": "In Verteidigungs-Haltung: nächster Treffer gibt doppelt Rage.",
+            "beschreibung_template": "In Verteidigungs-Haltung: nächster Treffer gibt {faktor}x Rage.",
+            "beschreibung_werte": {
+              "faktor": 2
+            },
+            "mechanik": "standhaft_rage",
+            "skalierung": {
+              "basis": 1.0,
+              "pro_level": 0
+            }
+          },
+          {
+            "id": "disziplin",
+            "name": "Disziplin",
+            "typ": "passiv",
+            "mana_reserviert": 10,
+            "beschreibung": "Haltungswechsel gibt +10 Rage.",
+            "beschreibung_template": "Haltungswechsel gibt +{bonus} Rage.",
+            "beschreibung_werte": {
+              "bonus": 10
+            },
+            "mechanik": "haltungswechsel_rage_bonus",
+            "skalierung": {
+              "basis": 10,
+              "pro_level": 1
+            }
+          },
+          {
+            "id": "kampferfahrung",
+            "name": "Kampferfahrung",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Rage-Verlust beim Haltungswechsel reduziert.",
+            "beschreibung_template": "Rage-Verlust beim Haltungswechsel um {bonus}% reduziert.",
+            "beschreibung_werte": {
+              "bonus": 30
+            },
+            "mechanik": "haltungsverlust_reduktion",
+            "skalierung": {
+              "basis": 0.3,
+              "pro_level": 0.02
+            }
+          }
+        ]
+      }
+    },
+    "paladin": {
+      "id": "paladin",
+      "name": "Paladin",
+      "basis_klasse": "krieger",
+      "beschreibung": "Verteidigung und Heilung durch Rage.",
+      "neue_mechanik": {
+        "name": "Heilige Wut",
+        "beschreibung": "Ab 70 Rage heilt jeder erhaltene Treffer um 5% des erlittenen Schadens. Rage sinkt dabei um 10 pro Treffer.",
+        "schwelle": 70,
+        "heilung_prozent": 0.05,
+        "rage_verlust": 10
+      },
+      "skill_baum": {
+        "nodes": [
+          {
+            "id": "pal_heilige_wut_heilung",
+            "name": "Heilige-Wut-Heilung",
+            "beschreibung": "+1% Heilung pro Treffer",
+            "beschreibung_template": "+{wert}% Heilung pro Treffer",
+            "beschreibung_werte": {
+              "wert": 1
+            },
+            "max_stufen": 3,
+            "benoetigt": [],
+            "schaltet_skill_frei": null,
+            "position": {
+              "reihe": 0,
+              "spalte": 1
+            }
+          },
+          {
+            "id": "pal_heilsegen_wert",
+            "name": "Heilsegen-Wert",
+            "beschreibung": "+3% Heilung",
+            "beschreibung_template": "+{wert}% Heilung",
+            "beschreibung_werte": {
+              "wert": 3
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "pal_heilige_wut_heilung"
+            ],
+            "schaltet_skill_frei": "heilsegen",
+            "position": {
+              "reihe": 1,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "pal_goettlicher_schutz_staerke",
+            "name": "Göttlicher-Schutz-Stärke",
+            "beschreibung": "+2% Schild",
+            "beschreibung_template": "+{wert}% Schild",
+            "beschreibung_werte": {
+              "wert": 2
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "pal_heilige_wut_heilung"
+            ],
+            "schaltet_skill_frei": "goettlicher_schutz",
+            "position": {
+              "reihe": 1,
+              "spalte": 2
+            }
+          },
+          {
+            "id": "pal_buße_kosten",
+            "name": "Buße-Kosten",
+            "beschreibung": "-5 Rage",
+            "beschreibung_template": "-{kosten} Rage",
+            "beschreibung_werte": {
+              "kosten": 5
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "pal_heilsegen_wert"
+            ],
+            "schaltet_skill_frei": "buße",
+            "position": {
+              "reihe": 2,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "pal_heilige_vergeltung_node",
+            "name": "Heilige-Vergeltung-Node",
+            "beschreibung": "Schaltet Heilige Vergeltung frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {
+              "skill_name": "Heilige Vergeltung"
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "pal_goettlicher_schutz_staerke"
+            ],
+            "schaltet_skill_frei": "heilige_vergeltung",
+            "position": {
+              "reihe": 2,
+              "spalte": 2
+            }
+          },
+          {
+            "id": "pal_maertyrer_node",
+            "name": "Märtyrer-Node",
+            "beschreibung": "Schaltet Märtyrer frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {
+              "skill_name": "Märtyrer"
+            },
+            "max_stufen": 3,
+            "benoetigt": [
+              "pal_buße_kosten"
+            ],
+            "schaltet_skill_frei": "maertyrer",
+            "position": {
+              "reihe": 3,
+              "spalte": 0
+            }
+          },
+          {
+            "id": "pal_goettliche_gnade_node",
+            "name": "Göttliche-Gnade-Node",
+            "beschreibung": "Schaltet Göttliche Gnade frei",
+            "beschreibung_template": "Schaltet {skill_name} frei",
+            "beschreibung_werte": {
+              "skill_name": "Göttliche Gnade"
+            },
+            "max_stufen": 2,
+            "benoetigt": [
+              "pal_heilige_vergeltung_node"
+            ],
+            "schaltet_skill_frei": "goettliche_gnade",
+            "position": {
+              "reihe": 3,
+              "spalte": 2
+            }
+          }
+        ],
+        "skills": [
+          {
+            "id": "heilsegen",
+            "name": "Heilsegen",
+            "typ": "aktiv",
+            "cooldown": 15.0,
+            "mana_kosten": 50,
+            "beschreibung": "Verbraucht 40 Rage, heilt 25% max HP.",
+            "beschreibung_template": "Verbraucht {rage_kosten} Rage, heilt {heilung}% max HP.",
+            "beschreibung_werte": {
+              "rage_kosten": 40,
+              "heilung": 25
+            },
+            "mechanik": "heilung_skill",
+            "rage_kosten": 40,
+            "heilung": 0.25,
+            "skalierung": {
+              "basis": 0.25,
+              "pro_level": 0.01
+            }
+          },
+          {
+            "id": "goettlicher_schutz",
+            "name": "Göttlicher Schutz",
+            "typ": "aktiv",
+            "cooldown": 20.0,
+            "mana_kosten": 55,
+            "beschreibung": "Verbraucht 50 Rage, erzeugt Schild der 20% max HP absorbiert.",
+            "beschreibung_template": "Verbraucht {rage_kosten} Rage, erzeugt Schild der {schild}% max HP absorbiert.",
+            "beschreibung_werte": {
+              "rage_kosten": 50,
+              "schild": 20
+            },
+            "mechanik": "schild_skill",
+            "rage_kosten": 50,
+            "schild_prozent": 0.2,
+            "skalierung": {
+              "basis": 0.2,
+              "pro_level": 0.01
+            }
+          },
+          {
+            "id": "buße",
+            "name": "Buße",
+            "typ": "aktiv",
+            "cooldown": 12.0,
+            "mana_kosten": 35,
+            "beschreibung": "Verbraucht 30 Rage, entfernt einen Debuff.",
+            "beschreibung_template": "Verbraucht {rage_kosten} Rage, entfernt einen Debuff.",
+            "beschreibung_werte": {
+              "rage_kosten": 30
+            },
+            "mechanik": "debuff_entfernen",
+            "rage_kosten": 30,
+            "skalierung": {
+              "basis": 1,
+              "pro_level": 0
+            }
+          },
+          {
+            "id": "heilige_vergeltung",
+            "name": "Heilige Vergeltung",
+            "typ": "aktiv",
+            "cooldown": 18.0,
+            "mana_kosten": 45,
+            "beschreibung": "Im Heilige-Wut-Zustand: nächster Angriff macht +60% Schaden.",
+            "beschreibung_template": "Im Heilige-Wut-Zustand: nächster Angriff macht +{bonus}% Schaden.",
+            "beschreibung_werte": {
+              "bonus": 60
+            },
+            "mechanik": "heilige_vergeltung",
+            "schaden_bonus": 0.6,
+            "skalierung": {
+              "basis": 0.6,
+              "pro_level": 0.02
+            }
+          },
+          {
+            "id": "maertyrer",
+            "name": "Märtyrer",
+            "typ": "passiv",
+            "mana_reserviert": 15,
+            "beschreibung": "Erlittener Schaden gibt +8 Rage statt +5.",
+            "beschreibung_template": "Erlittener Schaden gibt +{bonus} Rage statt +5.",
+            "beschreibung_werte": {
+              "bonus": 8
+            },
+            "mechanik": "rage_aufbau_erhoehen",
+            "neuer_wert": 8,
+            "skalierung": {
+              "basis": 8,
+              "pro_level": 0.5
+            }
+          },
+          {
+            "id": "goettliche_gnade",
+            "name": "Göttliche Gnade",
+            "typ": "passiv",
+            "mana_reserviert": 20,
+            "beschreibung": "Heilige Wut aktiviert sich bereits ab 60 Rage.",
+            "beschreibung_template": "Heilige Wut aktiviert sich bereits ab {schwelle} Rage.",
+            "beschreibung_werte": {
+              "schwelle": 60
+            },
+            "mechanik": "heilige_wut_schwelle",
+            "neue_schwelle": 60,
+            "skalierung": {
+              "basis": 60,
+              "pro_level": 0
+            }
+          }
+        ]
+      }
+    }
+  }
+}

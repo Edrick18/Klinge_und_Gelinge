@@ -1,0 +1,3 @@
+"""
+spiel/szenen - Spielbereiche
+"""

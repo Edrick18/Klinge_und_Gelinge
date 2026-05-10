@@ -19,24 +19,25 @@ server_start.bat
 
 # ==================== TESTS & DEBUG ====================
 tests/
-test_heartbeat.py
-db_check.py
 test_temp*.db
 .pytest_cache/
 
 # ==================== OPENCODE / KI-ASSISTENT ====================
-Skills/
+docs/
 .claude/
-FORTSCHRITT.md
-anforderungen.txt
-klassen-definitionen.md
-klassen.json
 
 # ==================== IDE ====================
 .vscode/
 .idea/
 
+# ==================== DEV-SKRIPTE (nur lokal) ====================
+server_start_dev.py
+_start_dev.py
+dev.bat
+duckdns_update.py
+_db_info.py
+_db_reset.py
+_build_helper.py
+
 # ==================== SONSTIGES ====================
 *.log
-start.bat
-build.bat

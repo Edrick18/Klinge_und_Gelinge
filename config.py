@@ -45,6 +45,7 @@ SERVER_MAX_VERBINDUNGEN = 100
 SERVER_TIMEOUT = 30
 
 SPIEL_VERSION = "0.1.0"
+MINDEST_VERSION = "0.1.0"  # Aeltere Clients werden vom Server abgelehnt
 VERSION_URL = "https://raw.githubusercontent.com/Edrick18/Klinge_und_gelinge/main/version.txt"
 DOWNLOAD_URL = "https://github.com/Edrick18/Klinge_und_gelinge/releases/latest/download/ProjektRPG.exe"
 

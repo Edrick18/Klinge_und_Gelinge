@@ -9,16 +9,16 @@ import sys
 
 
 def update_fenster_zeigen():
-    """Zeigt Update-Fenster mit Pygame"""
+    """Zeigt Pflicht-Update-Fenster (kein Ueberspringen moeglich)"""
     pygame.init()
-    fenster = pygame.display.set_mode((500, 200))
-    pygame.display.set_caption("Update verfügbar")
+    fenster = pygame.display.set_mode((500, 240))
+    pygame.display.set_caption("Update erforderlich")
     schrift = pygame.font.Font(None, 36)
     schrift_klein = pygame.font.Font(None, 24)
     uhr = pygame.time.Clock()
 
-    ja_button = pygame.Rect(100, 130, 120, 40)
-    nein_button = pygame.Rect(280, 130, 120, 40)
+    update_button = pygame.Rect(130, 150, 160, 45)
+    beenden_button = pygame.Rect(320, 158, 130, 30)
 
     while True:
         for event in pygame.event.get():
@@ -26,26 +26,28 @@ def update_fenster_zeigen():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if ja_button.collidepoint(event.pos):
+                if update_button.collidepoint(event.pos):
                     pygame.quit()
                     return True
-                if nein_button.collidepoint(event.pos):
+                if beenden_button.collidepoint(event.pos):
                     pygame.quit()
-                    return False
+                    sys.exit()
 
         fenster.fill((20, 20, 20))
-        titel = schrift.render("Update verfügbar!", True, (200, 160, 60))
-        fenster.blit(titel, (500 // 2 - titel.get_width() // 2, 40))
-        info = schrift_klein.render("Eine neue Version ist verfügbar.", True, (180, 180, 180))
-        fenster.blit(info, (500 // 2 - info.get_width() // 2, 85))
+        titel = schrift.render("Update erforderlich!", True, (200, 160, 60))
+        fenster.blit(titel, (500 // 2 - titel.get_width() // 2, 30))
+        info = schrift_klein.render("Eine neue Version ist verfuegbar.", True, (180, 180, 180))
+        fenster.blit(info, (500 // 2 - info.get_width() // 2, 80))
+        info2 = schrift_klein.render("Das Update wird automatisch installiert.", True, (140, 140, 140))
+        fenster.blit(info2, (500 // 2 - info2.get_width() // 2, 108))
 
-        pygame.draw.rect(fenster, (60, 160, 60), ja_button)
+        pygame.draw.rect(fenster, (60, 160, 60), update_button)
         ja_text = schrift_klein.render("Jetzt updaten", True, (255, 255, 255))
-        fenster.blit(ja_text, (ja_button.x + 10, ja_button.y + 12))
+        fenster.blit(ja_text, ja_text.get_rect(center=update_button.center))
 
-        pygame.draw.rect(fenster, (160, 60, 60), nein_button)
-        nein_text = schrift_klein.render("Überspringen", True, (255, 255, 255))
-        fenster.blit(nein_text, (nein_button.x + 10, nein_button.y + 12))
+        pygame.draw.rect(fenster, (60, 60, 60), beenden_button)
+        end_text = schrift_klein.render("Beenden", True, (160, 160, 160))
+        fenster.blit(end_text, end_text.get_rect(center=beenden_button.center))
 
         pygame.display.flip()
         uhr.tick(60)
@@ -56,6 +58,7 @@ try:
     if update_verfuegbar():
         if update_fenster_zeigen():
             update_durchfuehren()
+            sys.exit()
 except Exception:
     pass
 

@@ -10,7 +10,9 @@ from ..kern.basis_szene import BasisSzene
 from netzwerk.nachrichten import (
     LOGIN, LOGIN_ERFOLG, LOGIN_FEHLER,
     REGISTRIEREN, REGISTRIEREN_ERFOLG, REGISTRIEREN_FEHLER,
-    SCHLUESSEL_BENUTZERNAME, SCHLUESSEL_PASSWORT, SCHLUESSEL_NACHRICHT, SCHLUESSEL_SPIELER_ID
+    VERSION_ABGELEHNT,
+    SCHLUESSEL_BENUTZERNAME, SCHLUESSEL_PASSWORT, SCHLUESSEL_NACHRICHT, SCHLUESSEL_SPIELER_ID,
+    SCHLUESSEL_VERSION
 )
 
 
@@ -72,13 +74,15 @@ class LoginSzene(BasisSzene):
     def einloggen(self):
         self.netzwerk_client.nachricht_senden(LOGIN, {
             SCHLUESSEL_BENUTZERNAME: self.benutzername_eingabe,
-            SCHLUESSEL_PASSWORT: self.passwort_eingabe
+            SCHLUESSEL_PASSWORT: self.passwort_eingabe,
+            SCHLUESSEL_VERSION: config.SPIEL_VERSION
         })
 
     def registrieren(self):
         self.netzwerk_client.nachricht_senden(REGISTRIEREN, {
             SCHLUESSEL_BENUTZERNAME: self.benutzername_eingabe,
-            SCHLUESSEL_PASSWORT: self.passwort_eingabe
+            SCHLUESSEL_PASSWORT: self.passwort_eingabe,
+            SCHLUESSEL_VERSION: config.SPIEL_VERSION
         })
 
     def updaten(self, delta_zeit: float):
@@ -103,6 +107,60 @@ class LoginSzene(BasisSzene):
             elif typ == REGISTRIEREN_FEHLER:
                 self.status_nachricht = daten.get(SCHLUESSEL_NACHRICHT, "Fehler")
                 self.status_farbe = config.FARBE_HP
+            elif typ == VERSION_ABGELEHNT:
+                nachricht = daten.get(SCHLUESSEL_NACHRICHT, "Veraltete Version")
+                self.status_nachricht = nachricht
+                self.status_farbe = config.FARBE_WARNUNG
+                self._pflicht_update_starten()
+
+    def _pflicht_update_starten(self):
+        """Zeigt Pflicht-Update-Fenster (kein Ueberspringen moeglich)"""
+        import sys
+        schrift = pygame.font.Font(None, 36)
+        schrift_klein = pygame.font.Font(None, 26)
+        uhr = pygame.time.Clock()
+        b = config.AUFLOESUNG_BREITE
+        h = config.AUFLOESUNG_HOEHE
+
+        update_button = pygame.Rect(b // 2 - 120, h // 2 + 60, 240, 50)
+        beenden_button = pygame.Rect(b // 2 - 80, h // 2 + 130, 160, 40)
+
+        fenster = pygame.display.get_surface()
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if update_button.collidepoint(event.pos):
+                        from updater import update_durchfuehren
+                        update_durchfuehren()
+                        pygame.quit()
+                        sys.exit()
+                    if beenden_button.collidepoint(event.pos):
+                        pygame.quit()
+                        sys.exit()
+
+            fenster.fill(config.FARBE_HINTERGRUND)
+
+            titel = schrift.render("Update erforderlich!", True, config.FARBE_WARNUNG)
+            fenster.blit(titel, titel.get_rect(center=(b // 2, h // 2 - 60)))
+
+            info1 = schrift_klein.render("Deine Version ist zu alt.", True, config.FARBE_TEXT_GEDIMMT)
+            info2 = schrift_klein.render("Das Update wird automatisch installiert.", True, config.FARBE_TEXT_GEDIMMT)
+            fenster.blit(info1, info1.get_rect(center=(b // 2, h // 2 - 15)))
+            fenster.blit(info2, info2.get_rect(center=(b // 2, h // 2 + 15)))
+
+            pygame.draw.rect(fenster, config.FARBE_ERFOLG, update_button)
+            btn_text = schrift.render("Jetzt updaten", True, config.FARBE_WEISS)
+            fenster.blit(btn_text, btn_text.get_rect(center=update_button.center))
+
+            pygame.draw.rect(fenster, config.FARBE_DUNKELGRAU, beenden_button)
+            end_text = schrift_klein.render("Beenden", True, config.FARBE_TEXT_GEDIMMT)
+            fenster.blit(end_text, end_text.get_rect(center=beenden_button.center))
+
+            pygame.display.flip()
+            uhr.tick(60)
 
     def zeichnen(self, flaeche: pygame.Surface):
         flaeche.fill(config.FARBE_HINTERGRUND)

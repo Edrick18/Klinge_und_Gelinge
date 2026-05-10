@@ -14,6 +14,28 @@ from ..szenen.ladebildschirm import Ladebildschirm
 from ..szenen.hauptmenue_szene import HauptmenueSzene
 
 
+def _icon_erstellen() -> pygame.Surface:
+    """Zeichnet das Fenster-Icon programmatisch: Schild mit Schwert."""
+    icon = pygame.Surface((32, 32), pygame.SRCALPHA)
+    icon.fill((0, 0, 0, 0))
+
+    # Schild (Fuenfeck in Akzentfarbe)
+    schild_punkte = [(4, 2), (28, 2), (28, 18), (16, 30), (4, 18)]
+    pygame.draw.polygon(icon, (180, 120, 60), schild_punkte)
+    pygame.draw.polygon(icon, (220, 160, 90), schild_punkte, 1)
+
+    # Schwert-Klinge (vertikal, silber)
+    pygame.draw.line(icon, (210, 215, 225), (16, 5), (16, 21), 2)
+    # Parierstange (horizontal)
+    pygame.draw.line(icon, (210, 215, 225), (9, 21), (23, 21), 2)
+    # Griff
+    pygame.draw.line(icon, (160, 120, 70), (16, 21), (16, 27), 2)
+    # Knauf
+    pygame.draw.circle(icon, (190, 150, 80), (16, 28), 2)
+
+    return icon
+
+
 class Spiel:
     def __init__(self):
         pygame.init()
@@ -21,11 +43,12 @@ class Spiel:
             (config.AUFLOESUNG_BREITE, config.AUFLOESUNG_HOEHE)
         )
         pygame.display.set_caption(config.FENSTER_TITEL)
+        pygame.display.set_icon(_icon_erstellen())
+
         self.uhr = pygame.time.Clock()
         self.szenen_manager = SzenenManager()
         self.ereignis_handler = EreignisHandler()
         self.laufend = True
-        self._erste_szene_gestartet = False
         self.netzwerk_client = NetzwerkClient()
 
         if self.netzwerk_client.verbinden():

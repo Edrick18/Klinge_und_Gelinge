@@ -7,6 +7,7 @@ Abhängigkeiten: pygame, config, basis_szene
 import pygame
 import config
 from ..kern.basis_szene import BasisSzene
+from ..kern.ui_helfer import button_zeichnen, balken_zeichnen
 from netzwerk.nachrichten import (
     CHARAKTER_DETAILS_LADEN, CHARAKTER_DETAILS_ANTWORT,
     SCHLUESSEL_CHARAKTER_DATEN, SCHLUESSEL_CHARAKTER_ID,
@@ -25,6 +26,10 @@ class CharakterUebersichtSzene(BasisSzene):
         self.charakter_id = charakter_id
         self.charakter_daten = charakter_daten
         self.geladen = False
+
+        # Animierte Balken: aktuell angezeigte Fuellmenge (0.0–1.0)
+        self.xp_anzeige = 0.0
+        self.hp_anzeige = 0.0
 
         self._layout_berechnen()
 
@@ -131,6 +136,18 @@ class CharakterUebersichtSzene(BasisSzene):
                                 ))
 
     def updaten(self, delta_zeit: float):
+        # Balken-Animation: sanft zum Zielwert interpolieren
+        if self.geladen and self.charakter_daten:
+            char = self.charakter_daten
+            from spiel.systeme.stat_berechnung import StatBerechnung
+            xp_max = StatBerechnung.xp_fuer_naechstes_level(char.get("level", 1))
+            xp_ziel = char.get("erfahrung", 0) / xp_max if xp_max > 0 else 0.0
+            hp_ziel = char.get("hp", char.get("max_hp", 1)) / max(1, char.get("max_hp", 1))
+
+            geschwindigkeit = 3.0 * delta_zeit
+            self.xp_anzeige += (xp_ziel - self.xp_anzeige) * min(1.0, geschwindigkeit * 4)
+            self.hp_anzeige += (hp_ziel - self.hp_anzeige) * min(1.0, geschwindigkeit * 4)
+
         while True:
             nachricht = self.netzwerk_client.nachricht_holen()
             if not nachricht:
@@ -195,15 +212,24 @@ class CharakterUebersichtSzene(BasisSzene):
         xp_text = self.schrift_klein.render(f"XP: {erfahrung} / {xp_max}", True, config.FARBE_TEXT)
         flaeche.blit(xp_text, (self.links_x + 10, self.oben_y + 150))
 
+        # Animierter XP-Balken
         xp_balken_y = self.oben_y + 170
-        pygame.draw.rect(flaeche, config.FARBE_PANEL, (self.links_x + 10, xp_balken_y, self.xp_balken_breite, self.xp_balken_hoehe))
-        if xp_max > 0:
-            xp_fuell_breite = int(self.xp_balken_breite * (erfahrung / xp_max))
-            pygame.draw.rect(flaeche, config.FARBE_XP, (self.links_x + 10, xp_balken_y, xp_fuell_breite, self.xp_balken_hoehe))
-        pygame.draw.rect(flaeche, config.FARBE_RAND, (self.links_x + 10, xp_balken_y, self.xp_balken_breite, self.xp_balken_hoehe), 1)
+        xp_fuell = int(self.xp_balken_breite * self.xp_anzeige)
+        balken_zeichnen(flaeche, self.links_x + 10, xp_balken_y,
+                        self.xp_balken_breite, self.xp_balken_hoehe,
+                        xp_fuell, self.xp_balken_breite, config.FARBE_XP)
 
-        gold_text = self.schrift_normal.render(f"Gold: {gold}", True, config.FARBE_XP)
-        flaeche.blit(gold_text, (self.links_x + 10, xp_balken_y + 35))
+        # Animierter HP-Balken
+        max_hp = char.get("max_hp", 1)
+        hp_text = self.schrift_klein.render(f"HP: {max_hp}", True, config.FARBE_TEXT_GEDIMMT)
+        flaeche.blit(hp_text, (self.links_x + 10, xp_balken_y + 28))
+        hp_fuell = int(self.xp_balken_breite * self.hp_anzeige)
+        balken_zeichnen(flaeche, self.links_x + 10, xp_balken_y + 46,
+                        self.xp_balken_breite, self.xp_balken_hoehe,
+                        hp_fuell, self.xp_balken_breite, config.FARBE_HP)
+
+        gold_text = self.schrift_normal.render(f"💰 {gold} Gold", True, config.FARBE_XP)
+        flaeche.blit(gold_text, (self.links_x + 10, xp_balken_y + 72))
 
         grundwert_label = self.schrift_normal.render("GRUNDWERTE", True, config.FARBE_AKZENT)
         flaeche.blit(grundwert_label, (self.mitte_x + 10, self.oben_y))
@@ -247,15 +273,9 @@ class CharakterUebersichtSzene(BasisSzene):
         pygame.draw.line(flaeche, config.FARBE_RAND, (0, self.unten_y), (b, self.unten_y), 1)
 
         for btn in self.platzhalter_buttons:
-            pygame.draw.rect(flaeche, config.FARBE_DUNKELGRAU, btn["rect"])
-            pygame.draw.rect(flaeche, config.FARBE_RAND, btn["rect"], 1)
-            text = self.schrift_klein.render(btn["label"], True, config.FARBE_TEXT_GEDIMMT)
-            text_rect = text.get_rect(center=btn["rect"].center)
-            flaeche.blit(text, text_rect)
+            button_zeichnen(flaeche, btn["rect"], btn["label"], self.schrift_klein,
+                            farbe_bg=config.FARBE_DUNKELGRAU)
 
-        zuruück_button = pygame.Rect(20, h - 40, 100, 30)
-        pygame.draw.rect(flaeche, config.FARBE_PANEL, zuruück_button)
-        pygame.draw.rect(flaeche, config.FARBE_RAND, zuruück_button, 1)
-        zuruück_text = self.schrift_klein.render("← Zurück", True, config.FARBE_TEXT)
-        zuruück_rect = zuruück_text.get_rect(center=zuruück_button.center)
-        flaeche.blit(zuruück_text, zuruück_rect)
+        zurueck_button = pygame.Rect(20, h - 40, 100, 30)
+        button_zeichnen(flaeche, zurueck_button, "← Zurück", self.schrift_klein,
+                        farbe_bg=config.FARBE_PANEL)

@@ -6,7 +6,7 @@ echo ============================================
 
 :: Config sichern und auf localhost setzen
 copy config.py config.py.bak >nul
-py _build_helper.py lokal
+py werkzeuge\_build_helper.py lokal
 
 :: Alte Exe beenden falls sie noch laeuft
 taskkill /f /im ProjektRPG.exe >nul 2>&1

@@ -35,9 +35,7 @@ server_start_dev.py
 _start_dev.py
 dev.bat
 duckdns_update.py
-_db_info.py
-_db_reset.py
-_build_helper.py
+werkzeuge/
 
 # ==================== SONSTIGES ====================
 *.log

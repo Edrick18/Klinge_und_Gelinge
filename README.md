@@ -15,21 +15,17 @@ eigenes spiel erstellen/
 │
 ├── start.py                  ← Spiel starten (Tester-Version)
 ├── server_start.py           ← Produktions-Server starten
+├── server_start_dev.py       ← DEV: Separater Server (Port 55001, eigene DB)
+├── _start_dev.py             ← DEV: Spiel direkt per Python starten (localhost:55001)
+│
 ├── config.py                 ← Alle Einstellungen (Version, Port, Host, Farben)
 ├── version.txt               ← Aktuelle Versionsnummer (für Auto-Update)
 ├── updater.py                ← Auto-Update Logik
 ├── duckdns_update.py         ← IPv6/DuckDNS beim Server-Start aktualisieren
 │
 ├── dev.bat                   ← DEV: Server + Spiel auf einmal starten
-├── server_start_dev.py       ← DEV: Separater Server (Port 55001, eigene DB)
-├── _start_dev.py             ← DEV: Spiel direkt per Python starten (localhost:55001)
-│
 ├── build_release.bat         ← Exe bauen für Tester (klingeundgelinge.duckdns.org)
 ├── build_lokal.bat           ← Exe bauen zum lokalen Testen (localhost:55000)
-├── _build_helper.py          ← Hilfsskript für die Build-Bats (config tauschen)
-│
-├── _db_reset.py              ← ALLE Spielerdaten löschen (Tabellen bleiben)
-├── _db_info.py               ← Zeigt Anzahl Einträge pro Tabelle
 ├── server_start.bat          ← Shortcut: Server im eigenen Fenster starten
 │
 ├── netzwerk/                 ← Netzwerk-Protokoll (Client + Server gemeinsam)
@@ -92,6 +88,11 @@ eigenes spiel erstellen/
 │   └── daten/
 │       └── klassen/          ← Klassenbalancing als JSON (krieger, zauberer, ...)
 │
+├── werkzeuge/                ← Hilfsskripte (lokal, nicht im Git)
+│   ├── _build_helper.py      ← config.py temporär tauschen beim Build
+│   ├── _db_info.py           ← Zeigt Anzahl Einträge pro Tabelle
+│   └── _db_reset.py          ← ALLE Spielerdaten löschen (Tabellen bleiben)
+│
 ├── docs/                     ← Notizen, Planung (nicht im Git, nicht für Tester)
 │   ├── UPDATE_ANLEITUNG.txt  ← Schritt-für-Schritt: neues Update pushen
 │   ├── FORTSCHRITT.md
@@ -115,8 +116,8 @@ eigenes spiel erstellen/
 | Produktions-Server starten | `server_start.py` oder `server_start.bat` |
 | Exe für Tester bauen | `build_release.bat` |
 | Exe lokal testen | `build_lokal.bat` |
-| Alle Accounts löschen | `py _db_reset.py` |
-| DB-Inhalt prüfen | `py _db_info.py` |
+| Alle Accounts löschen | `py werkzeuge\_db_reset.py` |
+| DB-Inhalt prüfen | `py werkzeuge\_db_info.py` |
 | Update pushen | Siehe `docs/UPDATE_ANLEITUNG.txt` |
 
 ---

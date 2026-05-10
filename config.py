@@ -46,8 +46,8 @@ SERVER_TIMEOUT = 30
 
 SPIEL_VERSION = "0.1.2"
 MINDEST_VERSION = "0.1.2"
-VERSION_URL = "https://raw.githubusercontent.com/Edrick18/Klinge_und_gelinge/main/version.txt"
-DOWNLOAD_URL = "https://github.com/Edrick18/Klinge_und_gelinge/releases/latest/download/ProjektRPG.exe"
+VERSION_URL = "https://raw.githubusercontent.com/Edrick18/Klinge_und_Gelinge/main/version.txt"
+DOWNLOAD_URL = "https://github.com/Edrick18/Klinge_und_Gelinge/releases/latest/download/ProjektRPG.exe"
 
 # ==================== NETZWERK ====================
 

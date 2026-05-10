@@ -27,6 +27,18 @@ FORTSCHRITT.md
 anforderungen.txt
 klassen-definitionen.md
 
+# Server (läuft nur bei Lutz, nicht für Spieler)
+server/
+server_start.py
+server_start.bat
+
+# Debug & Tests
+db_check.py
+test_heartbeat.py
+tests/
+klassen.json
+build.bat
+
 # Tests
 .pytest_cache/
 tests/__pycache__/

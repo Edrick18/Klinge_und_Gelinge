@@ -38,14 +38,14 @@ LADEBILDSCHIRM_DAUER = 2.0
 
 # ==================== SERVER ====================
 
-SERVER_HOST = "match-shame.gl.at.ply.gg"
+SERVER_HOST = "klingeundgelinge.duckdns.org"
 SERVER_BIND_HOST = "0.0.0.0"
 SERVER_PORT = 55000
 SERVER_MAX_VERBINDUNGEN = 100
 SERVER_TIMEOUT = 30
 
-SPIEL_VERSION = "0.1.2"
-MINDEST_VERSION = "0.1.2"
+SPIEL_VERSION = "0.1.3"
+MINDEST_VERSION = "0.1.3"
 VERSION_URL = "https://raw.githubusercontent.com/Edrick18/Klinge_und_Gelinge/main/version.txt"
 DOWNLOAD_URL = "https://github.com/Edrick18/Klinge_und_Gelinge/releases/latest/download/ProjektRPG.exe"
 
